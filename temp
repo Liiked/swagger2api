@@ -1,0 +1,58 @@
+/* #swagger2api */
+
+/**
+ * Your code must be written within the 'eachApiTemplate' function which returns a string template.
+ * Code written out the function will raise error.
+ * 
+ * The demo function 'eachApiTemplate' have shown what you can get, 
+ * use those parameters to build your own template.
+ *
+ * It's free to use any javascript type file as the template, 
+ * just keep the format in accrodance with this file.
+ * 
+ * Warning: comment #swagger2api can't be removed or you will find the Error 'No Template Found'.
+ */
+function eachApiTemplate ({ method, operationId, paramObj, payloadObj, returnObj, title, url }) {
+
+  // some help variable
+  const basePath = '/base'
+
+  // some help function
+  function upperFirstLetter([str, ...rest]) {
+    return str.toUpperCase() + rest.join('')
+  }
+
+  function docs (title, params, payload) {
+    return `
+    /**
+     * ${title}
+     ${paramDoc(params)}
+     ${payloadDoc(payload)}
+     * 
+    */
+    `
+  }
+
+  function paramDoc (params) {
+    return params.map(d => (
+      `* @params ${d.name} {${d.type ? d.type : '*'}} ${d.description}\n`
+    )).join('')
+  }
+
+  function payloadDoc (payload) {
+    return payload.map(d => (
+      `* @params ${d.name} {${d.type ? d.type : '*'}} ${d.description}\n`
+    )).join('')
+  }
+
+  return `
+  ${docs(title, paramObj, payloadObj)}
+  export const api${upperFirstLetter(operationId)} = async (data) => {
+    const res = request('${basePath}${url}', {
+      method: '${method}',
+      ${ payloadObj.length ? 'data' : 'params'}: data
+    });
+    return res;
+  }
+  `
+}

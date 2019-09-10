@@ -1,0 +1,84 @@
+{
+  "name": "swagger2api",
+  "displayName": "swagger2api",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.36.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:json"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "s2a.readjson",
+        "title": "swagger json to template",
+        "category": "swagger2api",
+        "icon": {
+          "light": "./media/transfer.svg",
+          "dark": "./media/transfer.svg"
+        }
+      },
+      {
+        "command": "s2a.convert",
+        "title": "swagger template to api",
+        "category": "swagger2api",
+        "icon": {
+          "light": "./media/transfer.svg",
+          "dark": "./media/transfer.svg"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "s2a.readjson",
+          "group": "navigation",
+          "when": "resourceLangId == json"
+        },
+        {
+          "command": "s2a.convert",
+          "group": "navigation",
+          "when": "resourceFilename =~ /Untitled/"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "s2a.readjson",
+          "when": "resourceLangId == json"
+        },
+        {
+          "command": "s2a.convert",
+          "when": "resourceFilename =~ /Untitled/"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^10.12.21",
+    "@types/vscode": "^1.36.0",
+    "glob": "^7.1.4",
+    "mocha": "^6.1.4",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.1",
+    "vscode-test": "^1.0.2"
+  },
+  "dependencies": {
+    "@types/jsonfile": "^5.0.0",
+    "jsonfile": "^5.0.0"
+  }
+}

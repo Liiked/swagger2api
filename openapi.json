@@ -1,0 +1,3040 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "系统API文档",
+    "description": "渠道管理系统接口设计文档",
+    "version": "0.1",
+    "termsOfService": "http://swagger.io/terms/",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "192.168.36.24:8080/",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/type": {
+      "get": {
+        "tags": ["Type"],
+        "summary": "获取类型列表",
+        "operationId": "getTypes",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "current",
+            "description": "页码",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "pageSize",
+            "description": "每页记录数量",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Type"],
+        "summary": "新增类型",
+        "operationId": "createType",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TypeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/type/{id}": {
+      "put": {
+        "tags": ["Type"],
+        "summary": "编辑类型",
+        "operationId": "updateType",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "类型id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TypeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Type"],
+        "summary": "更改类型状态",
+        "operationId": "updateTypeStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "类型id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "status",
+            "description": "excepted status value",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Type"],
+        "summary": "获取指定类型详情",
+        "operationId": "getType",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "类型id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到，或者查找id不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Type"],
+        "summary": "删除类型",
+        "operationId": "delType",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "类型id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/typeSimple": {
+      "get": {
+        "tags": ["Type"],
+        "summary": "获取类型名列表，一般供dropbox使用",
+        "operationId": "getTypeSimple",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "searchKey",
+            "description": "模糊查询自身",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "foreignKey",
+            "description": "外键查询，限制范围",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channel": {
+      "get": {
+        "tags": ["Channel"],
+        "summary": "获取渠道列表",
+        "operationId": "getChannels",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "typeId",
+            "description": "类型（id）",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "name",
+            "description": "渠道名称，模糊搜索",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "id",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "current",
+            "description": "页码",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "pageSize",
+            "description": "每页记录数量",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Channel"],
+        "summary": "新增渠道",
+        "operationId": "createChannel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChannelRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channel/version/{version}": {
+      "get": {
+        "tags": ["Channel"],
+        "summary": "获取渠道列表，by version",
+        "operationId": "getChannelByVersion",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "version",
+            "description": "版本号",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PackChannelList"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channel/{id}": {
+      "get": {
+        "tags": ["Channel"],
+        "summary": "获取渠道详情",
+        "operationId": "getChannel",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到，或者查找id不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Channel"],
+        "summary": "更新渠道",
+        "operationId": "updateChannel",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChannelRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Channel"],
+        "summary": "更新渠道状态",
+        "operationId": "updateChannelStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "status",
+            "description": "excepted status value",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Channel"],
+        "summary": "删除渠道",
+        "operationId": "delChannel",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/channelSimple": {
+      "get": {
+        "tags": ["Channel"],
+        "summary": "获取渠道名列表，一般供dropbox使用",
+        "operationId": "getChannelSimple",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "searchKey",
+            "description": "模糊查询自身",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "foreignKey",
+            "description": "外键查询，限制范围",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelSimple"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agency": {
+      "get": {
+        "tags": ["Agency"],
+        "summary": "获取代理列表",
+        "operationId": "getAgencies",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "typeId",
+            "description": "类型（id）",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "channelId",
+            "description": "渠道（id）",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "name",
+            "description": "代理名称，模糊搜索",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "id",
+            "description": "代理id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "current",
+            "description": "页码",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "pageSize",
+            "description": "每页记录数量",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgencyList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Agency"],
+        "summary": "新增代理",
+        "operationId": "createAgency",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgencyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agency/{id}": {
+      "get": {
+        "tags": ["Agency"],
+        "summary": "获取代理详情",
+        "operationId": "getAgency",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgencyRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到，或者查找id不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Agency"],
+        "summary": "更新代理",
+        "operationId": "updateAgency",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "代理id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgencyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Agency"],
+        "summary": "更新代理状态",
+        "operationId": "updateAgencyStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "status",
+            "description": "excepted status value",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Agency"],
+        "summary": "删除代理",
+        "operationId": "delAgency",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "代理id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agencySimple": {
+      "get": {
+        "tags": ["Agency"],
+        "summary": "获取代理名列表，一般供dropbox使用",
+        "operationId": "getAgencySimple",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "searchKey",
+            "description": "模糊查询自身",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "foreignKey",
+            "description": "外键查询，限制范围",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "获取账户详情列表",
+        "operationId": "getAccounts",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "typeId",
+            "description": "类型（id）",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "channelId",
+            "description": "渠道（id）",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "username",
+            "description": "账号名称，模糊搜索",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "id",
+            "description": "账号id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "openAgencyId",
+            "description": "开户代理id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "deliveryAgencyId",
+            "description": "投放代理id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "openSubject",
+            "description": "开户主体",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "paymentSubject",
+            "description": "付款主体",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "openAccount",
+            "description": "open账户",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "current",
+            "description": "页码",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "pageSize",
+            "description": "每页记录数量",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Account"],
+        "summary": "新增账户",
+        "operationId": "createAccount",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openAccount": {
+      "post": {
+        "tags": ["Account"],
+        "summary": "新增账户",
+        "operationId": "createOpenAccount",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openAccount/{id}": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "获取open账户详情，用于修改",
+        "operationId": "getOpenAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "账户id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenAccountRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Account"],
+        "summary": "更新Open账户",
+        "operationId": "updateOpenAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "账户id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/{id}": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "获取账户详情",
+        "operationId": "getAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "账户id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Account"],
+        "summary": "更新账户",
+        "operationId": "updateAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "账户id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Account"],
+        "summary": "更新账户状态",
+        "operationId": "updateAccountStatus",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "账户id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "operate",
+            "description": "操作状态(1:更改激活回传；2:更改次留回传状态；3:更改账户状态)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "status",
+            "description": "excepted status value",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Account"],
+        "summary": "删除账户",
+        "operationId": "delAccount",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "账户id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accountSimple": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "获取账户账号列表，一般供dropbox使用",
+        "operationId": "getAccountSimple",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "searchKey",
+            "description": "模糊查询自身",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "foreignKey",
+            "description": "外键查询，限制范围",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openAccountSimple": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "获取open账户账号列表，一般供dropbox使用",
+        "operationId": "getOpenAccountSimple",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "searchKey",
+            "description": "模糊查询自身",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "foreignKey",
+            "description": "外键查询，限制范围",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/openSubjectSimple": {
+      "get": {
+        "tags": ["Account"],
+        "operationId": "getAccountOpenSubjectSimple",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "searchKey",
+            "description": "模糊查询自身",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "foreignKey",
+            "description": "外键查询，限制范围",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/paymentSubjectSimple": {
+      "get": {
+        "tags": ["Account"],
+        "operationId": "getAccountPaymentSubjectSimple",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "searchKey",
+            "description": "模糊查询自身",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "foreignKey",
+            "description": "外键查询，限制范围",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pack": {
+      "get": {
+        "tags": ["Pack"],
+        "summary": "获取包列表",
+        "operationId": "getPackages",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "channelIdDTU",
+            "description": "渠道号",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "version",
+            "description": "版本号",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "channelRef",
+            "description": "渠道",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "current",
+            "description": "页码",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "pageSize",
+            "description": "每页记录数量",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pack/sync": {
+      "post": {
+        "tags": ["Pack"],
+        "summary": "打包系统与投放系统同步包上传情况接口",
+        "operationId": "syncPack",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PackSyncRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pack/delivery": {
+      "get": {
+        "tags": ["Pack"],
+        "summary": "获取包分配列表",
+        "operationId": "getPackageDelivery",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "typeId",
+            "description": "类型id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "channelId",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "deliveryAgency",
+            "description": "投放代理id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "accountId",
+            "description": "账号id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "channelIdDTU",
+            "description": "渠道号",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "current",
+            "description": "页码",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "pageSize",
+            "description": "每页记录数量",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackDeliveryList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Pack"],
+        "summary": "新增分配",
+        "operationId": "createPackageDelivery",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PackDeliveryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pack/delivery/{id}": {
+      "get": {
+        "tags": ["Pack"],
+        "summary": "获取对应账号分配包的详情",
+        "operationId": "getAccountPackageDelivery",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "包分配id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackDeliveryResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Pack"],
+        "summary": "重新分配包到账号",
+        "operationId": "updateDelivery",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "包分配详情id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "version",
+            "description": "版本号，非必要",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "分配包数量",
+            "description": "deliveryNumber",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pack/preDelivery": {
+      "get": {
+        "tags": ["Pack"],
+        "summary": "获取剩余可分配包名列表",
+        "operationId": "preDelivery",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "channelId",
+            "description": "渠道id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "accountId",
+            "description": "账号id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "version",
+            "description": "版本号，非必要",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "分配包数量",
+            "description": "deliveryNumber",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pack/version": {
+      "get": {
+        "tags": ["Pack"],
+        "operationId": "getVersions",
+        "summary": "获取版本号，按时间最新优先排序",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "searchKey",
+            "description": "模糊查询自身",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "foreignKey",
+            "description": "外键查询，限制范围",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "操作成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "服务未找到",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "default": "服务未找到"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SuccessResponse": {
+        "description": "用于http200的回复消息",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "msg": {
+            "type": "string"
+          }
+        }
+      },
+      "SimpleDto": {
+        "description": "标准结果集，默认k-v数据",
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SimpleKeyValue"
+            }
+          }
+        }
+      },
+      "SimpleKeyValue": {
+        "description": "标准id-value对",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "TypeList": {
+        "description": "类型列表",
+        "type": "object",
+        "properties": {
+          "typesDtosList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypeDto"
+            }
+          },
+          "total": {
+            "type": "string"
+          },
+          "current": {
+            "type": "string"
+          },
+          "pageSize": {
+            "type": "string"
+          }
+        }
+      },
+      "TypeDto": {
+        "description": "类型详情",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "类型id",
+            "type": "string"
+          },
+          "name": {
+            "description": "类型名称",
+            "type": "string"
+          },
+          "updateTime": {
+            "description": "更新时间，时间戳，理应是long",
+            "type": "string"
+          },
+          "updaterName": {
+            "description": "更新人",
+            "type": "string"
+          },
+          "status": {
+            "description": "状态",
+            "type": "string"
+          }
+        }
+      },
+      "TypeRequest": {
+        "description": "创建，修改类型",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "类型id，创建时为空",
+            "type": "string"
+          },
+          "name": {
+            "description": "类型名称",
+            "type": "string"
+          }
+        }
+      },
+      "ChannelList": {
+        "description": "渠道列表",
+        "type": "object",
+        "properties": {
+          "channelDtosList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelDto"
+            }
+          },
+          "current": {
+            "type": "string"
+          },
+          "pageSize": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "ChannelDto": {
+        "description": "渠道详情",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "渠道id",
+            "type": "string"
+          },
+          "type": {
+            "description": "类型",
+            "type": "string"
+          },
+          "name": {
+            "description": "渠道名称",
+            "type": "string"
+          },
+          "shortName": {
+            "description": "渠道简称",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "渠道包前缀",
+            "type": "string"
+          },
+          "defaultPacks": {
+            "description": "默认打包数量，大于0，一般不会大于1000",
+            "type": "integer",
+            "format": "int32"
+          },
+          "url": {
+            "description": "登录网址",
+            "type": "string"
+          },
+          "updateTime": {
+            "description": "更新时间，时间戳，long",
+            "type": "string"
+          },
+          "updaterName": {
+            "description": "更新人",
+            "type": "string"
+          },
+          "status": {
+            "description": "状态",
+            "type": "string"
+          }
+        }
+      },
+      "PackChannelList": {
+        "description": "供打包系统的api，返回需要打包的渠道和打包size",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "渠道id",
+            "type": "string"
+          },
+          "name": {
+            "description": "渠道名称",
+            "type": "string"
+          },
+          "size": {
+            "description": "打包数量",
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ChannelSimple": {
+        "description": "用于渠道查询",
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "type": {
+                  "description": "类型",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "登录网址",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ChannelRequest": {
+        "description": "创建，修改渠道",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "渠道id，创建时为空",
+            "type": "string"
+          },
+          "name": {
+            "description": "渠道名称",
+            "type": "string"
+          },
+          "typeId": {
+            "description": "类型id",
+            "type": "string"
+          },
+          "typeName": {
+            "description": "类型名称",
+            "type": "string"
+          },
+          "shortName": {
+            "description": "渠道简介",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "渠道包前缀",
+            "type": "string"
+          },
+          "defaultPacks": {
+            "description": "默认打包数量",
+            "type": "integer",
+            "format": "int32"
+          },
+          "url": {
+            "description": "登录网址",
+            "type": "string"
+          }
+        }
+      },
+      "AgencyList": {
+        "description": "代理列表",
+        "type": "object",
+        "properties": {
+          "agencyDtoList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgencyDto"
+            }
+          },
+          "current": {
+            "type": "string"
+          },
+          "pageSize": {
+            "type": "string"
+          },
+          "total": {
+            "description": "total count of list",
+            "type": "string"
+          }
+        }
+      },
+      "AgencyDto": {
+        "description": "代理详情",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "代理id",
+            "type": "string"
+          },
+          "name": {
+            "description": "代理名称",
+            "type": "string"
+          },
+          "channels": {
+            "description": "代理渠道",
+            "type": "string"
+          },
+          "principal": {
+            "description": "负责人",
+            "type": "string"
+          },
+          "types": {
+            "description": "类型",
+            "type": "string"
+          },
+          "updateTime": {
+            "description": "更新时间，时间戳，long",
+            "type": "string"
+          },
+          "updaterName": {
+            "description": "更新人",
+            "type": "string"
+          },
+          "status": {
+            "description": "状态",
+            "type": "string"
+          }
+        }
+      },
+      "AgencyRequest": {
+        "description": "创建，查看和修改代理",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "代理id，新建时为空，查看和修改时附带",
+            "type": "string"
+          },
+          "name": {
+            "description": "代理名称",
+            "type": "string"
+          },
+          "types": {
+            "description": "类型k-v, 复数",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SimpleKeyValue"
+            }
+          },
+          "channels": {
+            "description": "渠道k-v, 复数",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SimpleKeyValue"
+            }
+          },
+          "companyName": {
+            "description": "公司名称",
+            "type": "string"
+          },
+          "principal": {
+            "description": "负责人",
+            "type": "string"
+          }
+        }
+      },
+      "AccountList": {
+        "description": "账户列表",
+        "type": "object",
+        "properties": {
+          "accountsList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountDto"
+            }
+          },
+          "current": {
+            "type": "string"
+          },
+          "pageSize": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountDto": {
+        "description": "账户详情",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "账号id",
+            "type": "string"
+          },
+          "types": {
+            "description": "类型",
+            "type": "string"
+          },
+          "channels": {
+            "description": "所属渠道",
+            "type": "string"
+          },
+          "openAgency": {
+            "description": "开户代理",
+            "type": "string"
+          },
+          "deliveryAgency": {
+            "description": "投放代理",
+            "type": "string"
+          },
+          "rebate": {
+            "description": "返点, 百分比，不含%号，整数位精度3，小数位精度2",
+            "type": "number"
+          },
+          "serviceCharge": {
+            "description": "服务费，百分比，不含%号，整数位精度3，小数位精度2",
+            "type": "number"
+          },
+          "url": {
+            "description": "登录网址",
+            "type": "string"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          },
+          "password": {
+            "description": "密码",
+            "type": "string"
+          },
+          "openSubject": {
+            "description": "开户主体",
+            "type": "string"
+          },
+          "paymentSubject": {
+            "description": "付款主体",
+            "type": "string"
+          },
+          "openAccountUsername": {
+            "description": "open账号名",
+            "type": "string"
+          },
+          "openAccountPassword": {
+            "description": "open账号密码",
+            "type": "string"
+          },
+          "channelRefId": {
+            "description": "渠道账号id，非本系统提供",
+            "type": "string"
+          },
+          "updateTime": {
+            "description": "更新时间，时间戳，long",
+            "type": "string"
+          },
+          "updaterName": {
+            "description": "更新人",
+            "type": "string"
+          },
+          "activePostback": {
+            "description": "激活回传状态",
+            "type": "string"
+          },
+          "retentionPostback": {
+            "description": "次留回传状态",
+            "type": "string"
+          },
+          "status": {
+            "description": "状态",
+            "type": "string"
+          }
+        }
+      },
+      "AccountRequest": {
+        "description": "创建，修改和查看账号",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "账号id，新建时为空，查看和修改时附带",
+            "type": "string"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/ChannelDto"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          },
+          "password": {
+            "description": "密码",
+            "type": "string"
+          },
+          "channelRefId": {
+            "description": "渠道账号id",
+            "type": "string"
+          },
+          "openSubject": {
+            "description": "开户主体",
+            "type": "string"
+          },
+          "paymentSubject": {
+            "description": "付款主体",
+            "type": "string"
+          },
+          "agencyList": {
+            "description": "代理类型及返点信息列表",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountAgency"
+            }
+          }
+        }
+      },
+      "OpenAccountRequest": {
+        "description": "创建，修改和查看账号",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "账号id，新建时为空，查看和修改时附带",
+            "type": "string"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          },
+          "password": {
+            "description": "密码",
+            "type": "string"
+          },
+          "agency": {
+            "description": "类型",
+            "$ref": "#/components/schemas/SimpleKeyValue"
+          },
+          "channel": {
+            "description": "渠道",
+            "$ref": "#/components/schemas/SimpleKeyValue"
+          },
+          "accountList": {
+            "description": "投放账户k-v",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SimpleKeyValue"
+            }
+          }
+        }
+      },
+      "AccountAgency": {
+        "description": "代理类型及返点信息单个信息",
+        "type": "object",
+        "properties": {
+          "openAgency": {
+            "description": "开户代理",
+            "$ref": "#/components/schemas/SimpleKeyValue"
+          },
+          "startTime": {
+            "description": "开始时间，时间戳，long",
+            "type": "integer",
+            "format": "int64"
+          },
+          "agencyType": {
+            "description": "代理类型(0:普通代理; 1:核心代理), 为0时，不产生绑定优化代理列表，为1时，产生绑定优化列表并可以多次添加",
+            "type": "string"
+          },
+          "rebate": {
+            "description": "返点，无%号，整数位精度3，小数位精度2",
+            "type": "number"
+          },
+          "coreAgencyList": {
+            "description": "绑定优化代理列表，仅当agencyType为1时有且一定不为空",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoreAgency"
+            }
+          }
+        }
+      },
+      "CoreAgency": {
+        "description": "绑定优化代理/核心代理/二级代理，都表示一个含义",
+        "type": "object",
+        "properties": {
+          "coreAgency": {
+            "description": "绑定优化代理（投放代理）",
+            "$ref": "#/components/schemas/SimpleKeyValue"
+          },
+          "startTime": {
+            "description": "优化代理的开始时间，时间戳，long",
+            "type": "integer",
+            "format": "int64"
+          },
+          "serviceCharge": {
+            "description": "服务费，无%号，整数位精度3，小数位精度2",
+            "type": "number"
+          }
+        }
+      },
+      "PackDeliveryList": {
+        "description": "包分配列表",
+        "type": "object",
+        "properties": {
+          "packDtoList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackDeliveryDto"
+            }
+          },
+          "current": {
+            "type": "string"
+          },
+          "pageSize": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "PackList": {
+        "description": "包列表",
+        "type": "object",
+        "properties": {
+          "packDtoList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackDto"
+            }
+          },
+          "current": {
+            "type": "string"
+          },
+          "pageSize": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "PackDeliveryDto": {
+        "description": "包分配详情",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "包分配id",
+            "type": "string"
+          },
+          "type": {
+            "description": "类型",
+            "type": "string"
+          },
+          "channel": {
+            "description": "渠道",
+            "type": "string"
+          },
+          "agency": {
+            "description": "投放代理",
+            "type": "string"
+          },
+          "username": {
+            "description": "账号",
+            "type": "string"
+          },
+          "channelIdDTU": {
+            "description": "渠道号",
+            "type": "string"
+          },
+          "updatedTime": {
+            "description": "更新时间，时间戳，long",
+            "type": "string"
+          },
+          "updaterName": {
+            "description": "更新人",
+            "type": "string"
+          }
+        }
+      },
+      "PackDto": {
+        "description": "包详情",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "包id",
+            "type": "string"
+          },
+          "channel": {
+            "description": "渠道",
+            "type": "string"
+          },
+          "channelIdDTU": {
+            "description": "渠道号",
+            "type": "string"
+          },
+          "url": {
+            "description": "渠道包下载链接",
+            "type": "string"
+          },
+          "versionType": {
+            "description": "版本类型",
+            "type": "string"
+          },
+          "version": {
+            "description": "版本号",
+            "type": "string"
+          },
+          "updatedTime": {
+            "description": "更新时间，时间戳，long",
+            "type": "string"
+          },
+          "updaterName": {
+            "description": "更新人",
+            "type": "string"
+          }
+        }
+      },
+      "PackDeliveryRequest": {
+        "description": "包分配请求body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "id，新建时为空，其余时候附带",
+            "type": "string"
+          },
+          "typeId": {
+            "description": "类型id",
+            "type": "string"
+          },
+          "channelId": {
+            "description": "渠道id",
+            "type": "string"
+          },
+          "deliveryAgencyId": {
+            "description": "投放代理id",
+            "type": "string"
+          },
+          "accountId": {
+            "description": "账号id",
+            "type": "string"
+          },
+          "version": {
+            "description": "版本",
+            "type": "string"
+          },
+          "deliveryNumber": {
+            "description": "分配包数量",
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PackDeliveryResponse": {
+        "description": "包分配详情body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "id",
+            "type": "string"
+          },
+          "type": {
+            "description": "类型",
+            "type": "string"
+          },
+          "channel": {
+            "description": "渠道",
+            "type": "string"
+          },
+          "deliveryAgency": {
+            "description": "投放代理",
+            "type": "string"
+          },
+          "account": {
+            "description": "账号",
+            "type": "string"
+          },
+          "version": {
+            "description": "版本",
+            "type": "string"
+          },
+          "deliveryPacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeliveryPackWithVersion"
+            }
+          }
+        }
+      },
+      "PackSyncRequest": {
+        "description": "同步信息",
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "integer"
+          },
+          "channelName": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "num": {
+            "type": "integer"
+          }
+        }
+      },
+      "DeliveryPackWithVersion": {
+        "description": "已分配包列表，携带版本信息",
+        "type": "object",
+        "properties": {
+          "version": {
+            "description": "版本",
+            "type": "string"
+          },
+          "names": {
+            "type": "array",
+            "description": "包名",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
