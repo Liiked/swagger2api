@@ -1,4 +1,4 @@
-# swagger2api README
+# swagger2api
 
 This is the README for your extension "swagger2api". After writing up a brief description, we recommend including the following sections.
 
