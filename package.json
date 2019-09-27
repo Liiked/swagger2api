@@ -2,7 +2,7 @@
   "name": "swagger2api",
   "displayName": "swagger2api",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.36.0"
   },
