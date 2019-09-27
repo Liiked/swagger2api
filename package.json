@@ -64,7 +64,13 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "commit": "git cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
@@ -79,6 +85,7 @@
   },
   "dependencies": {
     "@types/jsonfile": "^5.0.0",
+    "commitizen": "^4.0.3",
     "jsonfile": "^5.0.0"
   }
 }
