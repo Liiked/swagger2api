@@ -5,12 +5,17 @@
   "version": "0.1.0",
   "publisher": "liik",
   "repository": "https://github.com/Liiked/swagger2api",
+  "icon": "https://tva1.sinaimg.cn/large/006y8mN6gy1g7t8gz6mm2j305k05kq2v.jpg",
+  "keywords": [
+    "swagger",
+    "api"
+  ],
+  "categories": [
+    "Formatters"
+  ],
   "engines": {
     "vscode": "^1.36.0"
   },
-  "categories": [
-    "Other"
-  ],
   "activationEvents": [
     "onLanguage:json"
   ],
