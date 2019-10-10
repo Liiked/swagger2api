@@ -3,6 +3,7 @@
   "displayName": "swagger2api",
   "description": "",
   "version": "0.1.0",
+  "publisher": "liik",
   "engines": {
     "vscode": "^1.36.0"
   },
