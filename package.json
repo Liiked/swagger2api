@@ -1,9 +1,10 @@
 {
   "name": "swagger2api",
   "displayName": "swagger2api",
-  "description": "",
+  "description": "Quickly converting api document to usable Front-End code.",
   "version": "0.1.0",
   "publisher": "liik",
+  "repository": "https://github.com/Liiked/swagger2api",
   "engines": {
     "vscode": "^1.36.0"
   },
