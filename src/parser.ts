@@ -1,43 +1,10 @@
-interface ProccessedData {
-  [param: string]: any;
-  name: string;
-  schema: Schema;
-  required: boolean;
-  description: string;
-  properties: object;
-  "200": {
-    content: Property;
-    schema: Schema;
-  };
-  content: {
-    "application/json": {
-      schema: Schema;
-    };
-  };
-}
-
-interface Schema {
-  $ref: string;
-  type: string;
-}
-
-interface Property {
-  [param: string]: any;
-}
-
-interface Items {
-  name: string;
-  type: string;
-  description: string;
-  required: boolean;
-  subItems?: Items[];
-}
-
-export function paramFactory(obj: ProccessedData | ProccessedData[]) {
+export function paramFactory(
+  obj: Parser.ProccessedData | Parser.ProccessedData[]
+): Parser.ParamType[] {
   if (!obj) {
     return [];
   }
-  return (obj as any[]).map((d: ProccessedData) => ({
+  return (obj as any[]).map((d: Parser.ProccessedData) => ({
     name: d.name,
     type: d.schema.type,
     required: d.required,
@@ -46,18 +13,22 @@ export function paramFactory(obj: ProccessedData | ProccessedData[]) {
 }
 
 export function payloadFactory(
-  obj: ProccessedData | ProccessedData[],
-  fullObj: ProccessedData
-) {
+  obj: Parser.ProccessedData | Parser.ProccessedData[],
+  fullObj: Parser.ProccessedData
+): Parser.SwaggerItem[] {
   if (!obj) {
     return [];
   }
-  const ref = (obj as ProccessedData).content["application/json"].schema.$ref;
+  const ref = (obj as Parser.ProccessedData).content["application/json"].schema
+    .$ref;
   const requestBody = retriveJSON(fullObj, parseRef(ref));
   return extractParamFromRequest(requestBody, fullObj);
 }
 
-export function returnFactory(obj: ProccessedData, fullObj: ProccessedData) {
+export function returnFactory(
+  obj: Parser.ProccessedData,
+  fullObj: Parser.ProccessedData
+): Parser.SwaggerItem[] {
   const successObj = obj["200"];
   const schema = Object.values(successObj.content)[0].schema;
   const ref = schema.$ref;
@@ -82,9 +53,9 @@ export function parseModule(modules: Property, parser: (obj: object) => {}) {
 }
 
 function extractParamFromRequest(
-  obj: ProccessedData,
-  fullObj: ProccessedData
-): Items[] {
+  obj: Parser.ProccessedData,
+  fullObj: Parser.ProccessedData
+): Parser.SwaggerItem[] {
   const { properties, description: desc, required } = obj;
   const allJSONFile = fullObj;
   if (!properties) {
@@ -98,7 +69,10 @@ function extractParamFromRequest(
 
     if (type === "array") {
       if (items.type === "object") {
-        const subItem: Items[] = extractParamFromRequest(items, allJSONFile);
+        const subItem: Parser.SwaggerItem[] = extractParamFromRequest(
+          items,
+          allJSONFile
+        );
         innerItem = subItem;
       } else {
         const subItem = items.$ref
@@ -146,7 +120,10 @@ function parseRef(path: string): string[] {
     .split("/");
 }
 
-function retriveJSON(obj: ProccessedData, path: string[]): ProccessedData {
+function retriveJSON(
+  obj: Parser.ProccessedData,
+  path: string[]
+): Parser.ProccessedData {
   if (path.length > 1) {
     return retriveJSON(obj[path.shift() as string], path);
   }

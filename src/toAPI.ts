@@ -29,7 +29,7 @@ export default class ConverToApi {
       throw new Error("No api path found, please add some path for export.");
     }
 
-    const moduleObj: KeyValue = {};
+    const moduleObj: API.List = {};
 
     let modules = Object.values(paths).reduce((total: any[], path): any[] => {
       const _module = Object.values(path as object).map(d => d.tags[0]);
@@ -56,10 +56,10 @@ export default class ConverToApi {
           responses
         } = request;
 
-        const _module = tags[0];
-        const params = paramFactory(parameters);
-        const palyload = payloadFactory(requestBody, obj);
-        const returnObj = returnFactory(responses, obj);
+        const _module: string = tags[0];
+        const params: Parser.ParamType[] = paramFactory(parameters);
+        const palyload: Parser.SwaggerItem[] = payloadFactory(requestBody, obj);
+        const returnObj: Parser.SwaggerItem[] = returnFactory(responses, obj);
         moduleObj[_module] = [
           ...moduleObj[_module],
           {

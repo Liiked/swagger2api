@@ -4,13 +4,23 @@ import * as vscode from "vscode";
 import ConverToApi from "./toAPI";
 import { readFileSync } from "fs";
 import { parseModule } from "./parser";
+import { JsonDataProvider } from "./swaggerData";
 
 let fullApi: any = null;
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('swagger2api says "Hello"');
+  console.log(context.storagePath);
 
   const convertTool = new ConverToApi();
+  const jsonDataProvider = new JsonDataProvider(
+    vscode.workspace.rootPath || ""
+  );
+
+  vscode.window.registerTreeDataProvider("swaggerToApi", jsonDataProvider);
+  vscode.commands.registerCommand("s2a.refresh", () =>
+    jsonDataProvider.refresh()
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("s2a.readjson", async _ => {
@@ -72,6 +82,7 @@ export function activate(context: vscode.ExtensionContext) {
         try {
           if (fullApi) {
             const parsed = parseModule(fullApi, eachApiTemplate);
+            // jsonDataProvider.refresh(fullApi);
             for (const key in parsed) {
               const el = parsed[key];
               convertTool.genFile(`/${key}.js`, el.join("\n"));

@@ -2,10 +2,10 @@
   "name": "swagger2api",
   "displayName": "swagger2api",
   "description": "Quickly converting api document to usable Front-End code.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "liik",
   "repository": "https://github.com/Liiked/swagger2api",
-  "icon": "https://tva1.sinaimg.cn/large/006y8mN6gy1g7t8gz6mm2j305k05kq2v.jpg",
+  "icon": "media/icon.png",
   "keywords": [
     "swagger",
     "api"
@@ -17,10 +17,28 @@
     "vscode": "^1.36.0"
   },
   "activationEvents": [
+    "onView:nodeDependencies",
     "onLanguage:json"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "swagger-to-api",
+          "title": "swagger2api",
+          "icon": "media/transfer.svg"
+        }
+      ]
+    },
+    "views": {
+      "swagger-to-api": [
+        {
+          "id": "swaggerToApi",
+          "name": "Swagger To API"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "s2a.readjson",
@@ -39,9 +57,24 @@
           "light": "./media/transfer.svg",
           "dark": "./media/transfer.svg"
         }
+      },
+      {
+        "command": "s2a.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "media/light/refresh.svg",
+          "dark": "media/dark/refresh.svg"
+        }
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "s2a.refresh",
+          "when": "view == swaggerToApi",
+          "group": "navigation"
+        }
+      ],
       "editor/title": [
         {
           "command": "s2a.readjson",
