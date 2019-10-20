@@ -8,7 +8,14 @@ export default class Storage {
     this.cxt = cxt;
     this.savePath = Uri.parse(`file://${this.cxt.storagePath}/swaggerMetaJSON`);
   }
-
+  jsonToBuffer(json: object): Buffer | undefined {
+    try {
+      const str = JSON.stringify(json)
+      return Buffer.from(str)
+    } catch (error) {
+      console.error(error)
+    }
+  }
   writeFile(content: Buffer) {
     return workspace.fs.writeFile(this.savePath, content);
   }

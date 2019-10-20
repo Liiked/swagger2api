@@ -5,6 +5,7 @@ import ConverToApi from "./toAPI";
 import { readFileSync } from "fs";
 import { parseModule } from "./parser";
 import { JsonDataProvider } from "./swaggerData";
+import Storage from "./helper/storage";
 
 let fullApi: any = null;
 
@@ -16,6 +17,15 @@ export function activate(context: vscode.ExtensionContext) {
   const jsonDataProvider = new JsonDataProvider(
     vscode.workspace.rootPath || ""
   );
+
+  const saveFile = new Storage(context);
+  const saveBuffer = saveFile.jsonToBuffer({ aaa: "111" });
+  saveFile.writeFile(saveBuffer as Buffer).then(() => {
+    saveFile.readFile().then(d => {
+      console.log('file is');
+      console.log(d);
+    });
+  });
 
   vscode.window.registerTreeDataProvider("swaggerToApi", jsonDataProvider);
   vscode.commands.registerCommand("s2a.refresh", () =>
