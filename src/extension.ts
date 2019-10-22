@@ -14,18 +14,12 @@ export function activate(context: vscode.ExtensionContext) {
   console.log(context.storagePath);
 
   const convertTool = new ConverToApi();
-  const jsonDataProvider = new JsonDataProvider(
-    vscode.workspace.rootPath || ""
-  );
 
-  const saveFile = new Storage(context);
-  const saveBuffer = saveFile.jsonToBuffer({ aaa: "111" });
-  saveFile.writeFile(saveBuffer as Buffer).then(() => {
-    saveFile.readFile().then(d => {
-      console.log('file is');
-      console.log(d);
-    });
-  });
+  const saveFile: Storage = new Storage(context);
+  const jsonDataProvider = new JsonDataProvider(
+    vscode.workspace.rootPath || "",
+    saveFile
+  );
 
   vscode.window.registerTreeDataProvider("swaggerToApi", jsonDataProvider);
   vscode.commands.registerCommand("s2a.refresh", () =>
@@ -40,6 +34,8 @@ export function activate(context: vscode.ExtensionContext) {
         const content = d.getText();
         try {
           fullApi = convertTool.convert(content);
+          const saveBuffer = saveFile.jsonToBuffer(fullApi);
+          saveFile.writeFile(saveBuffer as Buffer);
         } catch (error) {
           vscode.window.showInformationMessage(error.message);
           console.error(error);

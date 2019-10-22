@@ -27,13 +27,10 @@ declare namespace Parser {
     type: string;
     required: boolean;
     description: string;
+    [key: string]: any;
   }
 
-  interface SwaggerItem {
-    name: string;
-    type: string;
-    description: string;
-    required: boolean;
+  interface SwaggerItem extends ParamType {
     subItems?: SwaggerItem[];
   }
 }
@@ -43,14 +40,33 @@ declare namespace API {
     [apiName: string]: SingleItem[];
   }
   interface SingleItem {
-    method: string;
-    operationId: string;
-    paramObj: Parser.ParamType[];
-    payloadObj: Parser.SwaggerItem[];
-    url: string;
-    title: string;
-    returnObj: Parser.SwaggerItem[];
+    [type.method]: string;
+    [type.operationId]: string;
+    [type.paramObj]: Parser.ParamType[];
+    [type.payloadObj]: Parser.SwaggerItem[];
+    [type.url]: string;
+    [type.title]: string;
+    [type.returnObj]: Parser.SwaggerItem[];
+    [property: string]: any; // 其他属性
   }
+
+  enum type {
+    apiModule = "apiModule", // api模块
+    apiItem = "apiItem", // 单个api
+    method = "method",
+    operationId = "operationId",
+    paramObj = "paramObj",
+    payloadObj = "payloadObj",
+    returnObj = "returnObj",
+    title = "title",
+    url = "url"
+  }
+}
+
+declare interface Storage {
+  jsonToBuffer(json: object): Buffer | undefined;
+  writeFile(content: Buffer): Thenable<void>;
+  readFile(): Thenable<Uint8Array>;
 }
 
 interface Property {
