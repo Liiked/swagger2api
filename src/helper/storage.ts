@@ -2,8 +2,8 @@ import { ExtensionContext, workspace, Uri, window } from "vscode";
 import * as fs from "fs";
 
 export default class Storage {
-  cxt: ExtensionContext;
-  private savePath: Uri;
+  public cxt: ExtensionContext;
+  public savePath: Uri;
 
   constructor(cxt: ExtensionContext) {
     this.cxt = cxt;
@@ -18,13 +18,27 @@ export default class Storage {
     }
   }
   writeFile(content: Buffer) {
-    console.log("write");
-
     return workspace.fs.writeFile(this.savePath, content);
   }
   readFile() {
     if (this.pathExists(`${this.cxt.storagePath}/swaggerMetaJSON`)) {
       return workspace.fs.readFile(this.savePath);
+    }
+    window.showInformationMessage(
+      "Workspace doesn't include any swagger data. You can try convert a Swagger file first."
+    );
+    return Promise.reject({
+      error: "File not generated!"
+    });
+  }
+  write(str: string, fileName: string) {
+    const path = Uri.parse(`file://${this.cxt.storagePath}/${fileName}`);
+    return workspace.fs.writeFile(path, Buffer.from(str));
+  }
+  read(fileName: string) {
+    if (this.pathExists(`${this.cxt.storagePath}/${fileName}`)) {
+      const savePath = Uri.parse(`file://${this.cxt.storagePath}/${fileName}`);
+      return workspace.fs.readFile(savePath);
     }
     window.showInformationMessage(
       "Workspace doesn't include any swagger data. You can try convert a Swagger file first."

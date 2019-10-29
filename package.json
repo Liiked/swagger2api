@@ -41,6 +41,11 @@
     },
     "commands": [
       {
+        "command": "s2a.fetchSourceData",
+        "title": "Fetch Source Data",
+        "category": "swagger2api"
+      },
+      {
         "command": "s2a.readjson",
         "title": "swagger json to template",
         "category": "swagger2api",
@@ -61,6 +66,7 @@
       {
         "command": "s2a.refresh",
         "title": "Refresh",
+        "category": "swagger2api",
         "icon": {
           "light": "media/light/refresh.svg",
           "dark": "media/dark/refresh.svg"
@@ -125,7 +131,9 @@
   },
   "dependencies": {
     "@types/jsonfile": "^5.0.0",
+    "axios": "^0.19.0",
     "commitizen": "^4.0.3",
-    "jsonfile": "^5.0.0"
+    "jsonfile": "^5.0.0",
+    "swagger-parser": "^8.0.2"
   }
 }

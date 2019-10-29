@@ -5,6 +5,7 @@ import ConverToApi from "./toAPI";
 import { readFileSync } from "fs";
 import { parseModule } from "./parser";
 import { JsonDataProvider } from "./swaggerData";
+import { Fetch } from "./fetch";
 import Storage from "./helper/storage";
 
 let fullApi: any = null;
@@ -13,6 +14,8 @@ export function activate(context: vscode.ExtensionContext) {
   console.log('swagger2api says "Hello"');
   console.log(context.storagePath);
 
+  const { subscriptions } = context;
+
   const convertTool = new ConverToApi();
 
   const saveFile: Storage = new Storage(context);
@@ -20,13 +23,14 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.rootPath || "",
     saveFile
   );
+  const fetch = new Fetch(context);
 
   vscode.window.registerTreeDataProvider("swaggerToApi", jsonDataProvider);
   vscode.commands.registerCommand("s2a.refresh", () =>
     jsonDataProvider.refresh()
   );
 
-  context.subscriptions.push(
+  subscriptions.push(
     vscode.commands.registerCommand("s2a.readjson", async _ => {
       // read file content
       if (vscode.window.activeTextEditor) {
@@ -52,7 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  context.subscriptions.push(
+  subscriptions.push(
     vscode.commands.registerCommand("s2a.convert", async () => {
       const rootPath = vscode.workspace.rootPath;
       if (!rootPath) {
@@ -102,6 +106,23 @@ export function activate(context: vscode.ExtensionContext) {
           console.error(error);
         }
       }
+    })
+  );
+
+  subscriptions.push(
+    vscode.commands.registerCommand("s2a.fetchSourceData", async () => {
+      const result = await vscode.window.showInputBox({
+        placeHolder:
+          "For example: http://gitlab.XXX.com/project/raw/master/project/src/swagger/openapi.yaml"
+      });
+      console.log(result);
+      if (!result) {
+        return;
+      }
+      fetch.fetchYaml(saveFile, result as string).then(d => {
+        const data = d;
+        console.log(data);
+      });
     })
   );
 }
