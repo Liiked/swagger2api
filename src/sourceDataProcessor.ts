@@ -5,7 +5,7 @@ import {
   parseModule,
   handledResponseType,
   handledcommonPayloadValue
-} from "./parser";
+} from "./parsers/swaggerAnalyser";
 import { API, Parser } from "./types";
 import * as vscode from "vscode";
 const fs = require("fs");

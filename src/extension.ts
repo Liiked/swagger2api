@@ -3,9 +3,9 @@
 import * as vscode from "vscode";
 import ConverToApi from "./sourceDataProcessor";
 import { readFileSync } from "fs";
-import { parseModule } from "./parser";
+import { parseModule } from "./parsers/swaggerAnalyser";
 import { JsonDataProvider as TreeViewDataProvider } from "./treeViewData";
-import { Fetch } from "./fetch";
+import { Fetch } from "./helper/fetch";
 import Storage from "./helper/storage";
 
 let fullApi: any = null;

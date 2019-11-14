@@ -1,4 +1,4 @@
-import { Parser } from "./types";
+import { Parser } from "../types";
 
 export type schema = {
   description: string;
@@ -71,7 +71,6 @@ export function paramFactory(obj: SingleApiType): Parser.ParamType[] {
 /**
  * 请求数据-payload
  * @param obj
- * @param fullObj
  */
 export function payloadFactory(obj: commomPayloadValue) {
   if (!obj) {
@@ -82,9 +81,8 @@ export function payloadFactory(obj: commomPayloadValue) {
 }
 
 /**
- * 返回数据工厂函数
+ * 解析api中的返回数据
  * @param obj
- * @param fullObj
  */
 export function returnFactory(obj: Parser.ProccessedData): handledResponseType {
   if (!obj) {
@@ -112,6 +110,10 @@ export function parseModule(modules: Property, parser: (obj: object) => {}) {
   return apiObj;
 }
 
+/**
+ * 解析api中的response
+ * @param response
+ */
 function extractResponseContent(response: responseType): handledResponseType {
   const responses = Object.keys(response);
   const result: handledResponseType = {};
@@ -126,6 +128,10 @@ function extractResponseContent(response: responseType): handledResponseType {
   return result;
 }
 
+/**
+ * 解析api中的payload
+ * @param payload
+ */
 function extractPayloadContent(payload: commomPayloadValue) {
   if (!payload) {
     return {};

@@ -1,7 +1,7 @@
 import axios from "axios";
 import SwaggerParser from "swagger-parser";
 import { ExtensionContext } from "vscode";
-import Storage from "./helper/storage";
+import Storage from "./storage";
 import path = require("path");
 import fs = require("fs");
 

@@ -1,4 +1,7 @@
-import { handledResponseType, handledcommonPayloadValue } from "./parser";
+import {
+  handledResponseType,
+  handledcommonPayloadValue
+} from "./parsers/swaggerAnalyser";
 
 export declare namespace Parser {
   interface ProccessedData {
