@@ -8,6 +8,7 @@ import {
   EventEmitter
 } from "vscode";
 import * as path from "path";
+import { API, Parser, Storage } from "./types";
 import { pipe } from "./helper/utils";
 
 enum type {

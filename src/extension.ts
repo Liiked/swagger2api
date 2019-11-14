@@ -1,10 +1,10 @@
 "use strict";
 
 import * as vscode from "vscode";
-import ConverToApi from "./toAPI";
+import ConverToApi from "./sourceDataProcessor";
 import { readFileSync } from "fs";
 import { parseModule } from "./parser";
-import { JsonDataProvider } from "./swaggerData";
+import { JsonDataProvider as TreeViewDataProvider } from "./treeViewData";
 import { Fetch } from "./fetch";
 import Storage from "./helper/storage";
 
@@ -18,26 +18,41 @@ export function activate(context: vscode.ExtensionContext) {
 
   const convertTool = new ConverToApi();
 
+  /**
+   *
+   * 初始化
+   *
+   */
+
   const saveFile: Storage = new Storage(context);
-  const jsonDataProvider = new JsonDataProvider(
+  const treeProvider = new TreeViewDataProvider(
     vscode.workspace.rootPath || "",
     saveFile
   );
+
+  // 远程数据
   const fetch = new Fetch(context);
 
-  vscode.window.registerTreeDataProvider("swaggerToApi", jsonDataProvider);
-  vscode.commands.registerCommand("s2a.refresh", () =>
-    jsonDataProvider.refresh()
-  );
+  // 树视图
+  vscode.window.registerTreeDataProvider("swaggerToApi", treeProvider);
+  vscode.commands.registerCommand("s2a.refresh", () => treeProvider.refresh());
 
+  /**
+   *
+   * 提交事件
+   *
+   **/
+
+  // 获取数据源-本地数据源
   subscriptions.push(
     vscode.commands.registerCommand("s2a.readjson", async _ => {
       // read file content
       if (vscode.window.activeTextEditor) {
-        const d = vscode.window.activeTextEditor.document;
-        const content = d.getText();
+        // TODO: 无uri时处理
+        const filePath = vscode.window.activeTextEditor.document.uri;
+
         try {
-          fullApi = convertTool.convert(content);
+          fullApi = await convertTool.convertPath(filePath);
           const saveBuffer = saveFile.jsonToBuffer(fullApi);
           saveFile.writeFile(saveBuffer as Buffer);
         } catch (error) {
@@ -56,9 +71,29 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
+  // 获取数据源-远程数据源
+  subscriptions.push(
+    vscode.commands.registerCommand("s2a.fetchSourceData", async () => {
+      const result = await vscode.window.showInputBox({
+        placeHolder:
+          "For example: http://gitlab.XXX.com/project/raw/master/project/src/swagger/openapi.yaml"
+      });
+      console.log(result);
+      if (!result) {
+        return;
+      }
+      fetch.fetchYaml(saveFile, result as string).then(d => {
+        const data = d;
+        console.log(data);
+      });
+    })
+  );
+
+  // 转换数据
   subscriptions.push(
     vscode.commands.registerCommand("s2a.convert", async () => {
       const rootPath = vscode.workspace.rootPath;
+
       if (!rootPath) {
         vscode.window.showErrorMessage("Error: no workspace found!");
         return;
@@ -106,23 +141,6 @@ export function activate(context: vscode.ExtensionContext) {
           console.error(error);
         }
       }
-    })
-  );
-
-  subscriptions.push(
-    vscode.commands.registerCommand("s2a.fetchSourceData", async () => {
-      const result = await vscode.window.showInputBox({
-        placeHolder:
-          "For example: http://gitlab.XXX.com/project/raw/master/project/src/swagger/openapi.yaml"
-      });
-      console.log(result);
-      if (!result) {
-        return;
-      }
-      fetch.fetchYaml(saveFile, result as string).then(d => {
-        const data = d;
-        console.log(data);
-      });
     })
   );
 }

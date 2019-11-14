@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as SwaggerParser from "swagger-parser";
+import SwaggerParser from "swagger-parser";
 import { ExtensionContext } from "vscode";
 import Storage from "./helper/storage";
 import path = require("path");

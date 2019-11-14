@@ -1,4 +1,6 @@
-declare namespace Parser {
+import { handledResponseType, handledcommonPayloadValue } from "./parser";
+
+export declare namespace Parser {
   interface ProccessedData {
     [param: string]: any;
     name: string;
@@ -18,8 +20,9 @@ declare namespace Parser {
   }
 
   interface Schema {
-    $ref: string;
+    properties: object | string;
     type: string;
+    $ref: string;
   }
 
   interface ParamType {
@@ -35,18 +38,18 @@ declare namespace Parser {
   }
 }
 
-declare namespace API {
+export declare namespace API {
   interface List {
     [apiName: string]: SingleItem[];
   }
   interface SingleItem {
     [type.method]: string;
     [type.operationId]: string;
-    [type.paramObj]: Parser.ParamType[];
-    [type.payloadObj]: Parser.SwaggerItem[];
+    [type.params]: Parser.ParamType[];
+    [type.payload]: handledcommonPayloadValue;
     [type.url]: string;
     [type.title]: string;
-    [type.returnObj]: Parser.SwaggerItem[];
+    [type.response]: handledResponseType;
     [property: string]: any; // 其他属性
   }
 
@@ -55,15 +58,15 @@ declare namespace API {
     apiItem = "apiItem", // 单个api
     method = "method",
     operationId = "operationId",
-    paramObj = "paramObj",
-    payloadObj = "payloadObj",
-    returnObj = "returnObj",
+    params = "params",
+    payload = "payload",
+    response = "response",
     title = "title",
     url = "url"
   }
 }
 
-declare interface Storage {
+export declare interface Storage {
   jsonToBuffer(json: object): Buffer | undefined;
   writeFile(content: Buffer): Thenable<void>;
   readFile(): Thenable<Uint8Array>;
