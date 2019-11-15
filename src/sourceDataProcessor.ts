@@ -2,7 +2,6 @@ import {
   paramFactory,
   returnFactory,
   payloadFactory,
-  parseModule,
   handledResponseType,
   handledcommonPayloadValue
 } from "./parsers/swaggerAnalyser";

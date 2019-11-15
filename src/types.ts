@@ -3,6 +3,10 @@ import {
   handledcommonPayloadValue
 } from "./parsers/swaggerAnalyser";
 
+// 空数据字符
+const defaultArrayPlaceholder = "[]";
+const defaultObjectPlaceholder = "{}";
+
 export declare namespace Parser {
   interface ProccessedData {
     [param: string]: any;
@@ -41,6 +45,7 @@ export declare namespace Parser {
   }
 }
 
+// 返回结果
 export declare namespace API {
   interface List {
     [apiName: string]: SingleItem[];

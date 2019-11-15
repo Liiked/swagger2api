@@ -9,16 +9,16 @@ import {
 } from "vscode";
 import * as path from "path";
 import { API, Parser, Storage } from "./types";
-import { pipe } from "./helper/utils";
 
 enum type {
+  apiProject = "apiProject", // 多项目时使用
   apiModule = "apiModule", // api模块
   apiItem = "apiItem", // 单个api
   method = "method",
   operationId = "operationId",
-  paramObj = "paramObj",
-  payloadObj = "payloadObj",
-  returnObj = "returnObj",
+  params = "params",
+  payload = "payload",
+  response = "response",
   title = "title",
   url = "url",
   // subItem类型
@@ -31,13 +31,14 @@ enum type {
 }
 
 const typeToIcon = {
+  [type.apiProject]: "module",
   [type.apiModule]: "module",
   [type.apiItem]: "api",
   [type.method]: "method",
   [type.operationId]: "text",
-  [type.paramObj]: "object",
-  [type.payloadObj]: "object",
-  [type.returnObj]: "object",
+  [type.params]: "object",
+  [type.payload]: "object",
+  [type.response]: "object",
   [type.title]: "text",
   [type.url]: "url",
   [type.swaggerItem]: "property",
@@ -47,6 +48,9 @@ const typeToIcon = {
   [type.description]: "item",
   [type.subItems]: ""
 };
+
+// 辅助函数
+const Keys = Object.keys;
 
 export class JsonDataProvider implements TreeDataProvider<JsonData> {
   private _onDidChangeTree: EventEmitter<
@@ -72,15 +76,13 @@ export class JsonDataProvider implements TreeDataProvider<JsonData> {
     }
 
     return this.parseApiData();
-
-    // return Promise.resolve([]);
   }
   async parseApiData(el?: JsonData): Promise<JsonData[]> {
     const rawStorage = await this.storage.readFile();
     const apiMetaJSON: API.List = JSON.parse(rawStorage.toString());
 
     if (!el) {
-      const arr: JsonData[] = Object.keys(apiMetaJSON).map(d => {
+      const arr = Keys(apiMetaJSON).map(d => {
         return new JsonData(
           d,
           type.apiModule,
@@ -89,91 +91,88 @@ export class JsonDataProvider implements TreeDataProvider<JsonData> {
         );
       });
       return Promise.resolve(arr);
-    } else {
-      if (el.type === "apiModule") {
-        const ApiModuleGroup: API.SingleItem[] = this.decodePathParent(
-          apiMetaJSON,
-          el.parentModule
-        );
-        const arr = ApiModuleGroup.map((d, index) => {
-          return new JsonData(
-            d.operationId,
-            type.apiItem,
-            TreeItemCollapsibleState.Collapsed,
-            this.savePath(el.label, index)
-          );
-        });
-        return Promise.resolve(arr);
-      }
-      if (el.type === "apiItem") {
-        const { parentModule } = el;
-        const targetApi: API.SingleItem = this.decodePathParent(
-          apiMetaJSON,
-          parentModule
-        );
-        const arr = Object.keys(targetApi).map(d => {
-          const itemInApi = targetApi[d];
-          const isDescription =
-            typeof itemInApi === "number" || typeof itemInApi === "string";
-          return new JsonData(
-            d,
-            d as type,
-            !isDescription && itemInApi && itemInApi.length
-              ? TreeItemCollapsibleState.Collapsed
-              : TreeItemCollapsibleState.None,
-            this.savePath(parentModule, d),
-            isDescription ? itemInApi : undefined
-          );
-        });
-        return Promise.resolve(arr);
-      }
-      if (
-        el.type === "paramObj" ||
-        el.type === "payloadObj" ||
-        el.type === "returnObj"
-      ) {
-        const { parentModule } = el;
-        const targetObj: Parser.SwaggerItem[] = this.decodePathParent(
-          apiMetaJSON,
-          parentModule
-        );
-        const arr = targetObj.map((d, index) => {
-          return new JsonData(
-            d.name,
-            type.swaggerItem,
-            TreeItemCollapsibleState.Collapsed,
-            this.savePath(parentModule, index),
-            d.description
-          );
-        });
-        return Promise.resolve(arr);
-      }
-      if (el.type === "swaggerItem") {
-        const { parentModule } = el;
-        const targetObj: Parser.SwaggerItem = this.decodePathParent(
-          apiMetaJSON,
-          parentModule
-        );
-        const arr = Object.keys(targetObj).map(d => {
-          const value = targetObj[d];
-          return new JsonData(
-            d,
-            d === "subItems" ? type.swaggerItem : (d as type),
-            (Array.isArray(value) && value.length) || typeof value === "object"
-              ? TreeItemCollapsibleState.Collapsed
-              : TreeItemCollapsibleState.None,
-            this.savePath(parentModule, d),
-            typeof value === "string" ||
-            value === "number" ||
-            value === "boolean"
-              ? value
-              : undefined
-          );
-        });
-        return Promise.resolve(arr);
-      }
-      return Promise.resolve([]);
     }
+    if (el.type === "apiModule") {
+      const ApiModuleGroup: API.SingleItem[] = this.decodePathParent(
+        apiMetaJSON,
+        el.parentModule
+      );
+      const arr = ApiModuleGroup.map((d, index) => {
+        return new JsonData(
+          d.operationId,
+          type.apiItem,
+          TreeItemCollapsibleState.Collapsed,
+          this.savePath(el.label, index)
+        );
+      });
+      return Promise.resolve(arr);
+    }
+    if (el.type === "apiItem") {
+      const { parentModule } = el;
+      const targetApi: API.SingleItem = this.decodePathParent(
+        apiMetaJSON,
+        parentModule
+      );
+      const arr = Keys(targetApi).map(d => {
+        const itemInApi = targetApi[d];
+        const isDescription =
+          typeof itemInApi === "number" || typeof itemInApi === "string";
+        return new JsonData(
+          d,
+          d as type,
+          !isDescription && itemInApi && itemInApi.length
+            ? TreeItemCollapsibleState.Collapsed
+            : TreeItemCollapsibleState.None,
+          this.savePath(parentModule, d),
+          isDescription ? itemInApi : undefined
+        );
+      });
+      return Promise.resolve(arr);
+    }
+    if (
+      el.type === type.params ||
+      el.type === type.payload ||
+      el.type === type.response
+    ) {
+      const { parentModule } = el;
+      const targetObj: Parser.SwaggerItem[] = this.decodePathParent(
+        apiMetaJSON,
+        parentModule
+      );
+      const arr = targetObj.map((d, index) => {
+        return new JsonData(
+          d.name,
+          type.swaggerItem,
+          TreeItemCollapsibleState.Collapsed,
+          this.savePath(parentModule, index),
+          d.description
+        );
+      });
+      return Promise.resolve(arr);
+    }
+    if (el.type === "swaggerItem") {
+      const { parentModule } = el;
+      const targetObj: Parser.SwaggerItem = this.decodePathParent(
+        apiMetaJSON,
+        parentModule
+      );
+      const arr = Keys(targetObj).map(d => {
+        const value = targetObj[d];
+        return new JsonData(
+          d,
+          d === "subItems" ? type.swaggerItem : (d as type),
+          (Array.isArray(value) && value.length) || typeof value === "object"
+            ? TreeItemCollapsibleState.Collapsed
+            : TreeItemCollapsibleState.None,
+          this.savePath(parentModule, d),
+          typeof value === "string" || value === "number" || value === "boolean"
+            ? value
+            : undefined
+        );
+      });
+      return Promise.resolve(arr);
+    }
+    return Promise.resolve([]);
   }
   savePath(former: string, next: string | number) {
     return former ? former + "." + String(next) : String(next);
