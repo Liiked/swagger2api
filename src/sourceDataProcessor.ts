@@ -2,15 +2,13 @@ import {
   paramFactory,
   returnFactory,
   payloadFactory,
-  handledResponseType,
+  schema,
   handledcommonPayloadValue
 } from "./parsers/swaggerAnalyser";
 import { API, Parser } from "./types";
 import * as vscode from "vscode";
 const fs = require("fs");
-const path = require("path");
 import SwaggerParser from "swagger-parser";
-// const { moduleParser } = require("../template.js");
 
 export default class ConverToApi {
   exportPath = ""; // 导出路径
@@ -45,8 +43,8 @@ export default class ConverToApi {
         } = request;
 
         const params: Parser.ParamType[] = paramFactory(parameters);
-        const payload: handledcommonPayloadValue = payloadFactory(requestBody);
-        const returnObj: handledResponseType = returnFactory(responses);
+        const payload: schema = payloadFactory(requestBody);
+        const returnObj: schema = returnFactory(responses);
 
         tags.forEach((e: string) => {
           moduleObj[e] = [

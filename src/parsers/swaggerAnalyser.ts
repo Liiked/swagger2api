@@ -64,7 +64,8 @@ export function paramFactory(obj: SingleApiType): Parser.ParamType[] {
     name: d.name,
     type: d.schema.type,
     required: d.required,
-    description: d.description
+    description: d.description,
+    properties: d.schema.properties
   }));
 }
 
@@ -72,9 +73,9 @@ export function paramFactory(obj: SingleApiType): Parser.ParamType[] {
  * 请求数据-payload
  * @param obj
  */
-export function payloadFactory(obj: commomPayloadValue) {
+export function payloadFactory(obj: commomPayloadValue): schema {
   if (!obj) {
-    return {};
+    return {} as schema;
   }
   const resContent = extractPayloadContent(obj);
   return resContent;
@@ -84,9 +85,9 @@ export function payloadFactory(obj: commomPayloadValue) {
  * 解析api中的返回数据
  * @param obj
  */
-export function returnFactory(obj: Parser.ProccessedData): handledResponseType {
+export function returnFactory(obj: Parser.ProccessedData): schema {
   if (!obj) {
-    return {};
+    return {} as schema;
   }
   const resContent = extractResponseContent(obj);
   return resContent;
@@ -114,36 +115,22 @@ export function parseModule(modules: Property, parser: (obj: object) => {}) {
  * 解析api中的response
  * @param response
  */
-function extractResponseContent(response: responseType): handledResponseType {
-  const responses = Object.keys(response);
-  const result: handledResponseType = {};
-  responses.forEach(d => {
-    const res = response[d];
-    const schema = extractSchema(res.content);
-    result[d] = {
-      content: schema,
-      description: res.description
-    };
-  });
-  return result;
+function extractResponseContent(response: responseType): schema {
+  const res = response["200"];
+  const schema = extractSchema(res.content);
+  return schema;
 }
 
 /**
  * 解析api中的payload
  * @param payload
  */
-function extractPayloadContent(payload: commomPayloadValue) {
+function extractPayloadContent(payload: commomPayloadValue): schema {
   if (!payload) {
-    return {};
+    return {} as schema;
   }
-  let result: handledcommonPayloadValue = {};
   const schema = extractSchema(payload.content!);
-  result = {
-    content: schema,
-    description: payload.description,
-    required: payload.required
-  };
-  return result;
+  return schema;
 }
 
 function extractSchema(obj: jsonContent) {

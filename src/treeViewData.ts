@@ -10,44 +10,26 @@ import {
 import * as path from "path";
 import { API, Parser, Storage } from "./types";
 
-enum type {
-  apiProject = "apiProject", // 多项目时使用
-  apiModule = "apiModule", // api模块
-  apiItem = "apiItem", // 单个api
-  method = "method",
-  operationId = "operationId",
-  params = "params",
-  payload = "payload",
-  response = "response",
-  title = "title",
-  url = "url",
-  // subItem类型
-  swaggerItem = "swaggerItem",
-  name = "name",
-  type = "type",
-  required = "required",
-  description = "description",
-  subItems = "subItems"
-}
-
-const typeToIcon = {
-  [type.apiProject]: "module",
-  [type.apiModule]: "module",
-  [type.apiItem]: "api",
-  [type.method]: "method",
-  [type.operationId]: "text",
-  [type.params]: "object",
-  [type.payload]: "object",
-  [type.response]: "object",
-  [type.title]: "text",
-  [type.url]: "url",
-  [type.swaggerItem]: "property",
-  [type.name]: "item",
-  [type.type]: "item",
-  [type.required]: "required",
-  [type.description]: "item",
-  [type.subItems]: ""
+const Icons: { [key in API.TreeViewType]: API.TreeViewTypeToIcon } = {
+  [API.TreeViewType.apiItem]: API.TreeViewTypeToIcon.apiItem,
+  [API.TreeViewType.apiProject]: API.TreeViewTypeToIcon.apiProject,
+  [API.TreeViewType.apiModule]: API.TreeViewTypeToIcon.apiModule,
+  [API.TreeViewType.apiItem]: API.TreeViewTypeToIcon.apiItem,
+  [API.TreeViewType.method]: API.TreeViewTypeToIcon.method,
+  [API.TreeViewType.operationId]: API.TreeViewTypeToIcon.operationId,
+  [API.TreeViewType.params]: API.TreeViewTypeToIcon.params,
+  [API.TreeViewType.payload]: API.TreeViewTypeToIcon.payload,
+  [API.TreeViewType.response]: API.TreeViewTypeToIcon.response,
+  [API.TreeViewType.title]: API.TreeViewTypeToIcon.title,
+  [API.TreeViewType.url]: API.TreeViewTypeToIcon.url,
+  [API.TreeViewType.swaggerItem]: API.TreeViewTypeToIcon.swaggerItem,
+  [API.TreeViewType.name]: API.TreeViewTypeToIcon.name,
+  [API.TreeViewType.type]: API.TreeViewTypeToIcon.type,
+  [API.TreeViewType.required]: API.TreeViewTypeToIcon.required,
+  [API.TreeViewType.description]: API.TreeViewTypeToIcon.description
 };
+
+type APIItem = API.List | API.SingleItem | API.SingleItem[] | string | number;
 
 // 辅助函数
 const Keys = Object.keys;
@@ -82,96 +64,95 @@ export class JsonDataProvider implements TreeDataProvider<JsonData> {
     const apiMetaJSON: API.List = JSON.parse(rawStorage.toString());
 
     if (!el) {
-      const arr = Keys(apiMetaJSON).map(d => {
+      const arr = Keys(apiMetaJSON).map(title => {
         return new JsonData(
-          d,
-          type.apiModule,
+          title,
+          API.TreeViewType.apiModule,
           TreeItemCollapsibleState.Collapsed,
-          d
+          apiMetaJSON[title]
         );
       });
       return Promise.resolve(arr);
     }
-    if (el.type === "apiModule") {
-      const ApiModuleGroup: API.SingleItem[] = this.decodePathParent(
-        apiMetaJSON,
-        el.parentModule
-      );
-      const arr = ApiModuleGroup.map((d, index) => {
-        return new JsonData(
-          d.operationId,
-          type.apiItem,
-          TreeItemCollapsibleState.Collapsed,
-          this.savePath(el.label, index)
-        );
-      });
-      return Promise.resolve(arr);
-    }
-    if (el.type === "apiItem") {
-      const { parentModule } = el;
-      const targetApi: API.SingleItem = this.decodePathParent(
-        apiMetaJSON,
-        parentModule
-      );
-      const arr = Keys(targetApi).map(d => {
-        const itemInApi = targetApi[d];
-        const isDescription =
-          typeof itemInApi === "number" || typeof itemInApi === "string";
-        return new JsonData(
-          d,
-          d as type,
-          !isDescription && itemInApi && itemInApi.length
-            ? TreeItemCollapsibleState.Collapsed
-            : TreeItemCollapsibleState.None,
-          this.savePath(parentModule, d),
-          isDescription ? itemInApi : undefined
-        );
-      });
-      return Promise.resolve(arr);
-    }
-    if (
-      el.type === type.params ||
-      el.type === type.payload ||
-      el.type === type.response
-    ) {
-      const { parentModule } = el;
-      const targetObj: Parser.SwaggerItem[] = this.decodePathParent(
-        apiMetaJSON,
-        parentModule
-      );
-      const arr = targetObj.map((d, index) => {
-        return new JsonData(
-          d.name,
-          type.swaggerItem,
-          TreeItemCollapsibleState.Collapsed,
-          this.savePath(parentModule, index),
-          d.description
-        );
-      });
-      return Promise.resolve(arr);
-    }
-    if (el.type === "swaggerItem") {
-      const { parentModule } = el;
-      const targetObj: Parser.SwaggerItem = this.decodePathParent(
-        apiMetaJSON,
-        parentModule
-      );
-      const arr = Keys(targetObj).map(d => {
-        const value = targetObj[d];
-        return new JsonData(
-          d,
-          d === "subItems" ? type.swaggerItem : (d as type),
-          (Array.isArray(value) && value.length) || typeof value === "object"
-            ? TreeItemCollapsibleState.Collapsed
-            : TreeItemCollapsibleState.None,
-          this.savePath(parentModule, d),
-          typeof value === "string" || value === "number" || value === "boolean"
-            ? value
-            : undefined
-        );
-      });
-      return Promise.resolve(arr);
-    }
+    // if (el.type === type.apiModule) {
+    //   const { parentModule } = el;
+    //   const arr = Keys(parentModule).map((d, index) => {
+    //     return new JsonData(
+    //       d.operationId,
+    //       type.apiItem,
+    //       TreeItemCollapsibleState.Collapsed,
+    //       this.savePath(el.label, index)
+    //     );
+    //   });
+    //   return Promise.resolve(arr);
+    // }
+    // if (el.type === type.apiItem) {
+    //   const { parentModule } = el;
+    //   const targetApi: API.SingleItem = this.decodePathParent(
+    //     apiMetaJSON,
+    //     parentModule
+    //   );
+    //   const arr = Keys(targetApi).map(d => {
+    //     const itemInApi = targetApi[d];
+    //     const isDescription =
+    //       typeof itemInApi === "number" || typeof itemInApi === "string";
+    //     return new JsonData(
+    //       d,
+    //       d as type,
+    //       !isDescription && itemInApi && itemInApi.length
+    //         ? TreeItemCollapsibleState.Collapsed
+    //         : TreeItemCollapsibleState.None,
+    //       this.savePath(parentModule, d),
+    //       isDescription ? itemInApi : undefined
+    //     );
+    //   });
+    //   return Promise.resolve(arr);
+    // }
+    // if (
+    //   el.type === type.params ||
+    //   el.type === type.payload ||
+    //   el.type === type.response
+    // ) {
+    //   const { parentModule } = el;
+    //   const targetObj: Parser.SwaggerItem[] = this.decodePathParent(
+    //     apiMetaJSON,
+    //     parentModule
+    //   );
+    //   const arr = targetObj.map((d, index) => {
+    //     return new JsonData(
+    //       d.name,
+    //       type.swaggerItem,
+    //       TreeItemCollapsibleState.Collapsed,
+    //       this.savePath(parentModule, index),
+    //       d.description
+    //     );
+    //   });
+    //   return Promise.resolve(arr);
+    // }
+    // if (el.type === type.swaggerItem) {
+    //   const { parentModule } = el;
+    //   const targetObj: Parser.SwaggerItem = this.decodePathParent(
+    //     apiMetaJSON,
+    //     parentModule
+    //   );
+    //   const arr = Keys(targetObj).map(d => {
+    //     const value = targetObj[d];
+    //     return new JsonData(
+    //       d,
+    //       d === "subItems" ? type.swaggerItem : (d as type),
+    //       (Array.isArray(value) && value.length) || typeof value === "object"
+    //         ? TreeItemCollapsibleState.Collapsed
+    //         : TreeItemCollapsibleState.None,
+    //       this.savePath(parentModule, d),
+    //       typeof value === "string" ||
+    //       typeof value === "number" ||
+    //       typeof value === "boolean"
+    //         ? String(value)
+    //         : undefined
+    //     );
+    //   });
+    //   return Promise.resolve(arr);
+    // }
     return Promise.resolve([]);
   }
   savePath(former: string, next: string | number) {
@@ -203,15 +184,15 @@ export class JsonData extends TreeItem {
   constructor(
     // 基础描述
     public readonly label: string, // 标签名
-    public readonly type: type, // 类型
+    public readonly type: API.TreeViewType, // 类型
     public readonly collapsibleState: TreeItemCollapsibleState, // 是否可折叠
     // 详细描述
-    public readonly parentModule: string, // 属性路径
+    public readonly parentModule: APIItem, // 属性路径
     public readonly content?: string, // 描述
     public readonly command?: Command // 调用命令
   ) {
     super(label, collapsibleState);
-    this.setIcon(typeToIcon[type]);
+    this.setIcon(Icons[type]);
   }
 
   get tooltip() {
