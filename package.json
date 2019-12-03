@@ -131,9 +131,11 @@
   },
   "dependencies": {
     "@types/jsonfile": "^5.0.0",
+    "@types/lodash": "^4.14.149",
     "axios": "^0.19.0",
     "commitizen": "^4.0.3",
     "jsonfile": "^5.0.0",
+    "lodash": "^4.17.15",
     "swagger-parser": "^8.0.2"
   }
 }

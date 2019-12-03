@@ -4,6 +4,7 @@ export type schema = {
   description: string;
   properties: properties;
   type: string;
+  [property: string]: any; // 其他属性
 };
 
 export type properties = {
