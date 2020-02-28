@@ -1,14 +1,5 @@
-import {
-  handledResponseType,
-  handledcommonPayloadValue,
-  schema
-} from "./parsers/swaggerAnalyser";
-
+import { schema } from "./parsers/swaggerAnalyser";
 import { TreeItemCollapsibleState, Command } from "vscode";
-
-// 空数据字符
-const defaultArrayPlaceholder = "[]";
-const defaultObjectPlaceholder = "{}";
 
 export enum TreeViewType {
   apiProject = "apiProject", // 多项目时使用

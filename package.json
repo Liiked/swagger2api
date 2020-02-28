@@ -18,7 +18,8 @@
   },
   "activationEvents": [
     "onView:nodeDependencies",
-    "onLanguage:json"
+    "onLanguage:json",
+    "workspaceContains:s2a.config.js"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -41,6 +42,11 @@
     },
     "commands": [
       {
+        "command": "s2a.fetchSourceBySelect",
+        "title": "Select Source Data",
+        "category": "swagger2api"
+      },
+      {
         "command": "s2a.fetchSourceData",
         "title": "Fetch Source Data",
         "category": "swagger2api"
@@ -53,6 +59,11 @@
           "light": "./media/transfer.svg",
           "dark": "./media/transfer.svg"
         }
+      },
+      {
+        "command": "s2a.quickInput",
+        "title": "swagger quick input",
+        "category": "swagger2api"
       },
       {
         "command": "s2a.convert",
@@ -71,6 +82,16 @@
           "light": "media/light/refresh.svg",
           "dark": "media/dark/refresh.svg"
         }
+      },
+      {
+        "command": "s2a.createConfig",
+        "title": "create config",
+        "category": "swagger2api"
+      },
+      {
+        "command": "s2a.clearCache",
+        "title": "clear cache",
+        "category": "swagger2api"
       }
     ],
     "menus": {

@@ -45,6 +45,9 @@ export type jsonContent = {
   "application/json": {
     schema: schema;
   };
+  "text/plain": {
+    schema: schema;
+  };
 };
 
 interface Property {
@@ -99,13 +102,16 @@ export function returnFactory(obj: Parser.ProccessedData): schema {
  * @param modules
  * @param parser
  */
-export function parseModule(modules: Property, parser: (obj: object) => {}) {
+export function parseModule(
+  modules: Property,
+  parser: (obj: object, index: number, tag: string) => {}
+) {
   const apiObj: Property = {};
   for (const key in modules) {
     const apis = modules[key];
 
-    const apiMaps = apis.map((e: object) => {
-      return parser(e);
+    const apiMaps = apis.map((e: object, index: number) => {
+      return parser(e, index, key);
     });
     apiObj[key] = apiMaps;
   }
@@ -135,5 +141,6 @@ function extractPayloadContent(payload: commomPayloadValue): schema {
 }
 
 function extractSchema(obj: jsonContent) {
-  return obj["application/json"].schema;
+  const origin = obj["application/json"] || obj["text/plain"];
+  return origin.schema;
 }

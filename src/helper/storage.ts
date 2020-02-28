@@ -62,7 +62,13 @@ export default class Storage {
       error: "File not generated!"
     });
   }
-  private pathExists(p: string): boolean {
+  /**
+   * 清理缓存
+   */
+  clearFile() {
+    this.writeFile(Buffer.from(""));
+  }
+  pathExists(p: string): boolean {
     try {
       fs.accessSync(p);
     } catch (err) {

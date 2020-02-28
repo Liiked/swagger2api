@@ -7,8 +7,11 @@ import { parseModule } from "./parsers/swaggerAnalyser";
 import { JsonDataProvider as TreeViewDataProvider } from "./treeViewData";
 import { Fetch } from "./helper/fetch";
 import Storage from "./helper/storage";
+import SourceDataFetch from "./sourceDataFetch";
 
-let fullApi: any = null;
+import { showQuickPick, showInputBox } from "./basicInput";
+import { multiStepInput } from "./multiStepInput";
+import { quickOpen } from "./quickOpen";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('swagger2api says "Hello"');
@@ -43,49 +46,67 @@ export function activate(context: vscode.ExtensionContext) {
    *
    **/
 
-  // 获取数据源-本地数据源
+  subscriptions.push(
+    vscode.commands.registerCommand("s2a.quickInput", async () => {
+      const options: {
+        [key: string]: (context: vscode.ExtensionContext) => Promise<void>;
+      } = {
+        showQuickPick,
+        showInputBox,
+        multiStepInput,
+        quickOpen
+      };
+      const quickPick = vscode.window.createQuickPick();
+      quickPick.items = Object.keys(options).map(label => ({ label }));
+      quickPick.onDidChangeSelection(selection => {
+        if (selection[0]) {
+          options[selection[0].label](context).catch(console.error);
+        }
+      });
+      quickPick.onDidHide(() => quickPick.dispose());
+      quickPick.show();
+    })
+  );
+
+  // 获取数据源-当前打开文件
   subscriptions.push(
     vscode.commands.registerCommand("s2a.readjson", async _ => {
       // read file content
-      if (vscode.window.activeTextEditor) {
-        // TODO: 无uri时处理
-        const filePath = vscode.window.activeTextEditor.document.uri;
-
-        try {
-          fullApi = await convertTool.convertPath(filePath);
-          const saveBuffer = saveFile.jsonToBuffer(fullApi);
-          saveFile.writeFile(saveBuffer as Buffer);
-        } catch (error) {
-          vscode.window.showInformationMessage(error.message);
-          console.error(error);
-          return;
-        }
+      try {
+        SourceDataFetch.fromActiveFile(context);
+        // read template
+        const temp = readFileSync(context.asAbsolutePath("./temp"), "utf8");
+        let doc = await vscode.workspace.openTextDocument({
+          content: temp,
+          language: "javascript"
+        });
+        await vscode.window.showTextDocument(doc, { preview: false });
+      } catch (error) {
+        vscode.window.showErrorMessage(error.message);
       }
-      // read template
-      const temp = readFileSync(context.asAbsolutePath("./temp"), "utf8");
-      let doc = await vscode.workspace.openTextDocument({
-        content: temp,
-        language: "javascript"
-      });
-      await vscode.window.showTextDocument(doc, { preview: false });
+    })
+  );
+
+  // 获取数据源-选择一个文件
+  subscriptions.push(
+    vscode.commands.registerCommand("s2a.fetchSourceBySelect", async _ => {
+      // read file content
+      try {
+        SourceDataFetch.fromSelectFile();
+      } catch (error) {
+        vscode.window.showErrorMessage(error.message);
+      }
     })
   );
 
   // 获取数据源-远程数据源
   subscriptions.push(
     vscode.commands.registerCommand("s2a.fetchSourceData", async () => {
-      const result = await vscode.window.showInputBox({
-        placeHolder:
-          "For example: http://gitlab.XXX.com/project/raw/master/project/src/swagger/openapi.yaml"
-      });
-      console.log(result);
-      if (!result) {
-        return;
+      try {
+        SourceDataFetch.fromRemoteFile(context);
+      } catch (error) {
+        vscode.window.showErrorMessage(error.message);
       }
-      fetch.fetchYaml(saveFile, result as string).then(d => {
-        const data = d;
-        console.log(data);
-      });
     })
   );
 
@@ -125,6 +146,9 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         }
         try {
+          const saveFile: Storage = new Storage(context);
+          const apiBuffer = await saveFile.readFile();
+          const fullApi = JSON.parse(apiBuffer.toString());
           if (fullApi) {
             const parsed = parseModule(fullApi, eachApiTemplate);
             // jsonDataProvider.refresh(fullApi);
@@ -141,6 +165,35 @@ export function activate(context: vscode.ExtensionContext) {
           console.error(error);
         }
       }
+    })
+  );
+  // 生成配置文件
+  subscriptions.push(
+    vscode.commands.registerCommand("s2a.createConfig", async params => {
+      const defaultConfig = readFileSync(
+        context.asAbsolutePath("./s2a.config.js"),
+        "utf8"
+      );
+      const savePath = vscode.workspace.rootPath + "/s2a.config.js";
+      const isExisted = saveFile.pathExists(savePath);
+      // 判断文件是否存在
+      if (isExisted) {
+        vscode.window.showErrorMessage("Swagger2api config exists!");
+        return;
+      }
+      vscode.workspace.fs.writeFile(
+        vscode.Uri.parse(savePath),
+        Buffer.from(defaultConfig)
+      );
+      vscode.window.showInformationMessage(
+        "Swagger2api config successfully generated!"
+      );
+    })
+  );
+  // 清理缓存
+  subscriptions.push(
+    vscode.commands.registerCommand("s2a.clearCache", async () => {
+      saveFile.clearFile();
     })
   );
 }

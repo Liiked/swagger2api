@@ -5,6 +5,7 @@ import {
   schema,
   handledcommonPayloadValue
 } from "./parsers/swaggerAnalyser";
+import path from "path";
 import { API, Parser } from "./types";
 import * as vscode from "vscode";
 const fs = require("fs");
@@ -17,7 +18,18 @@ export default class ConverToApi {
    * @param uri 数据源存储路径
    */
   async convertPath(uri: vscode.Uri): Promise<API.List> {
-    const apiDocument = await SwaggerParser.validate(uri.toString());
+    let apiDocument = null;
+    apiDocument = await SwaggerParser.validate(
+      decodeURIComponent(uri.toString())
+    ).catch(e => {
+      // TODO: 错误需暴露到上层统一处理
+      vscode.window.showErrorMessage("Validate Error:", e.message);
+      Promise.reject(e);
+    });
+
+    if (!apiDocument) {
+      return {};
+    }
     const { paths } = apiDocument;
     const moduleObj: API.List = {};
 
@@ -54,7 +66,7 @@ export default class ConverToApi {
               method,
               response: returnObj,
               operationId,
-              title: summary,
+              title: summary || url.replace(/\//g, "_"),
               params,
               payload
             }

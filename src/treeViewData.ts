@@ -54,9 +54,8 @@ export class JsonDataProvider
    * 接口实现
    * @param item
    */
-  async refresh() {
-    const data = await this.parseApiData();
-    this._onDidChangeTree.fire(data);
+  refresh() {
+    this._onDidChangeTree.fire();
   }
   /**
    * 接口实现
@@ -79,8 +78,6 @@ export class JsonDataProvider
     }
     return this.parseApiData();
   }
-
-  refreshView(): void {}
 
   /**
    * getChildren的具体实现
@@ -165,11 +162,13 @@ export class JsonDataProvider
       return (singleAPI as Parser.ParamType[]).map(d => {
         const kString = d.type as keyof typeof TreeViewType;
         return {
-          label: d.name,
+          label: d.name || d.description,
           type: TreeViewType[kString],
-          collapsibleState: d.description
-            ? TreeItemCollapsibleState.Collapsed
-            : TreeItemCollapsibleState.None,
+          collapsibleState:
+            this.isCollaspe(d.properties) ||
+            (d.description
+              ? TreeItemCollapsibleState.Collapsed
+              : TreeItemCollapsibleState.None),
           description: d.description,
           children: this.generateTreeItemOfAPI(d)
         };

@@ -12,47 +12,60 @@
  * 
  * Warning: comment #swagger2api can't be removed or you will find the Error 'No Template Found'.
  */
-function eachApiTemplate ({ method, operationId, paramObj, payloadObj, returnObj, title, url }) {
+function eachApiTemplate ({ method, operationId, params, payload, response, title, url }, index, tag) {
 
   // some help variable
-  const basePath = '/base'
+  const basePath = ''
+  const {properties} = payload;
 
   // some help function
   function upperFirstLetter([str, ...rest]) {
     return str.toUpperCase() + rest.join('')
   }
 
-  function docs (title, params, payload) {
+  function docs (title, params, properties) {
     return `
     /**
      * ${title}
      ${paramDoc(params)}
-     ${payloadDoc(payload)}
+     ${payloadDoc(properties)}
      * 
     */
     `
   }
 
   function paramDoc (params) {
+    if (!params) {
+      return ''
+    }
     return params.map(d => (
-      `* @params ${d.name} {${d.type ? d.type : '*'}} ${d.description}\n`
+      `* @param ${d.name} {${d.type ? d.type : '*'}} ${d.description}\n`
     )).join('')
   }
 
   function payloadDoc (payload) {
-    return payload.map(d => (
-      `* @params ${d.name} {${d.type ? d.type : '*'}} ${d.description}\n`
-    )).join('')
+    const payloadDoc = []
+    if(!payload) {
+      return ''
+    }
+    for (const key in payload) {
+      const el = payload[key];
+      payloadDoc.push(`* @param ${key} {${el.type ? el.type : '*'}} ${el.description}\n`)
+    }
+    return payloadDoc.join('')
   }
 
-  return `
-  ${docs(title, paramObj, payloadObj)}
-  export const api${upperFirstLetter(operationId)} = async (data) => {
+  return`
+  ${docs(title, params, properties)}
+  export const api${operationId ? upperFirstLetter(operationId) : upperFirstLetter(tag) + index} = async (data) => {
     const res = request('${basePath}${url}', {
       method: '${method}',
-      ${ payloadObj.length ? 'data' : 'params'}: data
+      ${`${ properties ? 'data' : 'params'}`}: data
     });
-    return res;
-  }
-  `
+    if (res && _.isUndefined(res.errorCode)) {
+      return res;
+    }
+    return {};
+  }`
+  
 }
