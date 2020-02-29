@@ -4,9 +4,9 @@ import {
   payloadFactory,
   schema,
   handledcommonPayloadValue
-} from "./parsers/swaggerAnalyser";
+} from "../codeTemplateProvider/swaggerAnalyser";
 import path from "path";
-import { API, Parser } from "./types";
+import { API, Parser } from "../types";
 import * as vscode from "vscode";
 const fs = require("fs");
 import SwaggerParser from "swagger-parser";

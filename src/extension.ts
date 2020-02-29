@@ -1,17 +1,17 @@
 "use strict";
 
 import * as vscode from "vscode";
-import ConverToApi from "./sourceDataProcessor";
+import ConverToApi from "./sourceProvider/sourceDataProcessor";
 import { readFileSync } from "fs";
-import { parseModule } from "./parsers/swaggerAnalyser";
-import { JsonDataProvider as TreeViewDataProvider } from "./treeViewData";
-import { Fetch } from "./helper/fetch";
-import Storage from "./helper/storage";
-import SourceDataFetch from "./sourceDataFetch";
+import { parseModule } from "./codeTemplateProvider/swaggerAnalyser";
+import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/treeViewData";
+import { Fetch } from "./storeManage/fetch";
+import Storage from "./storeManage/storage";
+import SourceDataFetch from "./storeManage/sourceDataFetch";
 
-import { showQuickPick, showInputBox } from "./basicInput";
-import { multiStepInput } from "./multiStepInput";
-import { quickOpen } from "./quickOpen";
+import { showQuickPick, showInputBox } from "./viewManage/selector/basicInput";
+import { multiStepInput } from "./viewManage/selector/multiStepInput";
+import { quickOpen } from "./viewManage/selector/quickOpen";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('swagger2api says "Hello"');

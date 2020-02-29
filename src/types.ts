@@ -1,4 +1,4 @@
-import { schema } from "./parsers/swaggerAnalyser";
+import { schema } from "./codeTemplateProvider/swaggerAnalyser";
 import { TreeItemCollapsibleState, Command } from "vscode";
 
 export enum TreeViewType {

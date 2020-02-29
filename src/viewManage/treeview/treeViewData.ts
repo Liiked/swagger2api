@@ -14,9 +14,9 @@ import {
   API,
   Parser,
   Storage
-} from "./types";
+} from "../../types";
 import * as _ from "lodash";
-import { schema } from "./parsers/swaggerAnalyser";
+import { schema } from "../../codeTemplateProvider/swaggerAnalyser";
 
 const Icons: { [key in TreeViewType]: TreeViewTypeToIcon } = {
   [TreeViewType.apiProject]: TreeViewTypeToIcon.apiProject,

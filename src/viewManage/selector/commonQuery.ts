@@ -1,4 +1,4 @@
-import { quickListSelect, quickInput, quickFileSelect } from "./helper/query";
+import { quickListSelect, quickInput, quickFileSelect } from "./query";
 
 export default class CommonQuery {
   static dataSource = "";

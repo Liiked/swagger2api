@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import ConverToApi from "./sourceDataProcessor";
-import Storage from "./helper/storage";
-import CommonQuery from "./commonQuery";
-import { Fetch } from "./helper/fetch";
+import ConverToApi from "../sourceProvider/sourceDataProcessor";
+import Storage from "./storage";
+import CommonQuery from "../viewManage/selector/commonQuery";
+import { Fetch } from "./fetch";
 
 export default class SourceDataFetch {
   /**
