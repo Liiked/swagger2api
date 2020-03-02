@@ -7,6 +7,7 @@ import { parseModule } from "./codeTemplateProvider/swaggerAnalyser";
 import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/treeViewData";
 import { Fetch } from "./storeManage/fetch";
 import Storage from "./storeManage/storage";
+import StoreManage from "./storeManage";
 import SourceDataFetch from "./storeManage/sourceDataFetch";
 
 import { showQuickPick, showInputBox } from "./viewManage/selector/basicInput";
@@ -27,6 +28,8 @@ export function activate(context: vscode.ExtensionContext) {
    *
    */
 
+  const storeManage = new StoreManage(context);
+
   const saveFile: Storage = new Storage(context);
   const treeProvider = new TreeViewDataProvider(
     vscode.workspace.rootPath || "",
@@ -45,6 +48,14 @@ export function activate(context: vscode.ExtensionContext) {
    * 提交事件
    *
    **/
+  subscriptions.push(
+    vscode.commands.registerCommand(
+      "s2a.test.storeManage.genConfig",
+      async () => {
+        storeManage.saveUserConfig();
+      }
+    )
+  );
 
   subscriptions.push(
     vscode.commands.registerCommand("s2a.quickInput", async () => {

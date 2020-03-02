@@ -1,8 +1,6 @@
 import axios from "axios";
-import SwaggerParser from "swagger-parser";
 import { ExtensionContext, Uri } from "vscode";
 import Storage from "./storage";
-import path = require("path");
 import fs = require("fs");
 
 export class Fetch {
