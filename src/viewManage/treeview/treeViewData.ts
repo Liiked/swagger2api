@@ -5,7 +5,9 @@ import {
   TreeDataProvider,
   window,
   Event,
-  EventEmitter
+  EventEmitter,
+  workspace,
+  Uri
 } from "vscode";
 import * as path from "path";
 import {
@@ -266,22 +268,29 @@ export class JsonData extends TreeItem {
     if (!iconName) {
       return;
     }
+    // TODO: 需要将media文件夹打包进去
     this.iconPath = {
-      light: path.join(
-        __filename,
-        "..",
-        "..",
-        "media",
-        "light",
-        `${iconName}.svg`
+      light: Uri.parse(
+        path.join(
+          __filename,
+          "..",
+          "..",
+          "..",
+          "media",
+          "light",
+          `${iconName}.svg`
+        )
       ),
-      dark: path.join(
-        __filename,
-        "..",
-        "..",
-        "media",
-        "dark",
-        `${iconName}.svg`
+      dark: Uri.parse(
+        path.join(
+          __filename,
+          "..",
+          "..",
+          "..",
+          "media",
+          "dark",
+          `${iconName}.svg`
+        )
       )
     };
   }

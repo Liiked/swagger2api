@@ -9,9 +9,10 @@ import { Fetch } from "./storeManage/fetch";
 import Storage from "./storeManage/storage";
 import StoreManage from "./storeManage";
 import SourceDataFetch from "./storeManage/sourceDataFetch";
+import { ConfigSelector } from "./viewManage/selector";
 
 import { showQuickPick, showInputBox } from "./viewManage/selector/basicInput";
-import { multiStepInput } from "./viewManage/selector/multiStepInput";
+// import { multiStepInput } from "./viewManage/selector/multiStepInput";
 import { quickOpen } from "./viewManage/selector/quickOpen";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -50,6 +51,15 @@ export function activate(context: vscode.ExtensionContext) {
    **/
   subscriptions.push(
     vscode.commands.registerCommand(
+      "s2a.test.viewManage.configSelector",
+      async () => {
+        const result = await ConfigSelector(context);
+        console.log(result);
+      }
+    )
+  );
+  subscriptions.push(
+    vscode.commands.registerCommand(
       "s2a.test.storeManage.genConfig",
       async () => {
         storeManage.saveUserConfig();
@@ -64,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
       } = {
         showQuickPick,
         showInputBox,
-        multiStepInput,
+        // multiStepInput,
         quickOpen
       };
       const quickPick = vscode.window.createQuickPick();
