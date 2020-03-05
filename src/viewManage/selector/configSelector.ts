@@ -16,7 +16,7 @@ class MyButton implements QuickInputButton {
   ) {}
 }
 
-interface State {
+export interface UserInputState {
   title: string;
   step: number;
   totalSteps: number;
@@ -40,12 +40,15 @@ export default async function ConfigSelector(cxt: ExtensionContext) {
   ].map(label => ({ label }));
 
   async function collectInputs() {
-    const state = {} as Partial<State>;
+    const state = {} as Partial<UserInputState>;
     await MultiStepInput.run(input => pickSourceType(input, state));
-    return state as State;
+    return state as UserInputState;
   }
 
-  async function pickSourceType(input: MultiStepInput, state: Partial<State>) {
+  async function pickSourceType(
+    input: MultiStepInput,
+    state: Partial<UserInputState>
+  ) {
     const pick = await input.showQuickPick({
       title,
       step: 1,
@@ -64,7 +67,10 @@ export default async function ConfigSelector(cxt: ExtensionContext) {
     return (input: MultiStepInput) => inputSource(input, state);
   }
 
-  async function inputSource(input: MultiStepInput, state: Partial<State>) {
+  async function inputSource(
+    input: MultiStepInput,
+    state: Partial<UserInputState>
+  ) {
     const isLocal =
       state.sourceFrom && state.sourceFrom.label === "来自本地" ? true : false;
     const prompt = isLocal
@@ -85,7 +91,10 @@ export default async function ConfigSelector(cxt: ExtensionContext) {
     return (input: MultiStepInput) => inputOutPath(input, state);
   }
 
-  async function inputOutPath(input: MultiStepInput, state: Partial<State>) {
+  async function inputOutPath(
+    input: MultiStepInput,
+    state: Partial<UserInputState>
+  ) {
     state.outPath = await input.showInputBox({
       title,
       step: 3,

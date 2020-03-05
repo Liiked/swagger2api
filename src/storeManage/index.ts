@@ -1,6 +1,7 @@
 import { ExtensionContext, workspace, Uri, window } from "vscode";
 import { jsonToBuffer } from "../helper/utils";
 import s2aConfig from "../configProvider/s2a.config";
+import { Config } from "../configProvider/processConfig";
 import axios from "axios";
 import * as fs from "fs";
 
@@ -90,17 +91,28 @@ export default class StroeManager {
   /**
    * user config
    */
-  async saveUserConfig() {
-    if (this.userConfigPath.fsPath) {
+  async saveUserConfig(config: Config) {
+    if (this.pathExists(this.userConfigPath.fsPath)) {
       window.showInformationMessage("Config exists!");
       return;
     }
-    const configStr = JSON.stringify(s2aConfig);
+    const configStr = JSON.stringify(config);
     const configTemp = `module.exports = ${configStr}`;
     return this.basicSave(this.userConfigPath, Buffer.from(configTemp));
   }
+
   async readUserConfig() {
-    return this.basicRead(this.userConfigPath);
+    if (!this.pathExists(this.userConfigPath.fsPath)) {
+      window.showErrorMessage("no config found");
+      return null;
+    }
+    return this.basicRead(this.userConfigPath).then(d => {
+      try {
+        return JSON.parse(d.toString()) as Config;
+      } catch (error) {
+        return null;
+      }
+    });
   }
 
   /**

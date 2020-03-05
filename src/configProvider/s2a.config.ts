@@ -6,7 +6,7 @@ export default {
   // 不导出api的规则, glob
   // excludeApiPath: ["**/path"],
   // 转换模板，path / url / {name, from: path}
-  templates: "/exportApi/templates/template.js"
+  templates: "/.s2a/templates/template.js"
   // templates: [
   //   {
   //     out: "/mock",

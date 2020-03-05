@@ -10,6 +10,7 @@ import Storage from "./storeManage/storage";
 import StoreManage from "./storeManage";
 import SourceDataFetch from "./storeManage/sourceDataFetch";
 import { ConfigSelector } from "./viewManage/selector";
+import { parseUserInput } from "./configProvider";
 
 import { showQuickPick, showInputBox } from "./viewManage/selector/basicInput";
 // import { multiStepInput } from "./viewManage/selector/multiStepInput";
@@ -54,7 +55,12 @@ export function activate(context: vscode.ExtensionContext) {
       "s2a.test.viewManage.configSelector",
       async () => {
         const result = await ConfigSelector(context);
-        console.log(result);
+        const config = parseUserInput(result);
+        if (!config) {
+          return;
+        }
+        storeManage.saveUserConfig(config);
+        console.log(config);
       }
     )
   );
@@ -62,7 +68,11 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "s2a.test.storeManage.genConfig",
       async () => {
-        storeManage.saveUserConfig();
+        storeManage.saveUserConfig({
+          source: ["http://www.example.com/swagger.json"],
+          out: "/exportApi",
+          templates: "/.s2a/templates/template.js"
+        });
       }
     )
   );

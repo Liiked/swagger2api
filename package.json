@@ -17,7 +17,8 @@
     "vscode": "^1.40.0"
   },
   "activationEvents": [
-    "workspaceContains:s2a.config.js"
+    "workspaceContains:package.json",
+    "onCommand:s2a.test.viewManage.configSelector"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -39,6 +40,11 @@
       ]
     },
     "commands": [
+      {
+        "command": "s2a.test.viewManage.configSelector",
+        "title": "测试:视图管理-配置选择器",
+        "category": "swagger2api"
+      },
       {
         "command": "s2a.test.storeManage.genConfig",
         "title": "测试:储存器-生成config",
