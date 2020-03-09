@@ -5,11 +5,11 @@ interface PathObject {
   out: string;
 }
 
-interface SourcePath extends PathObject {
+export interface SourcePath extends PathObject {
   from: string;
 }
 
-interface TemplatePath extends PathObject {
+export interface TemplatePath extends PathObject {
   out: string;
   templatePath: string;
   excludeApiPath: string[];

@@ -2,6 +2,7 @@
 
 import * as vscode from "vscode";
 import ConverToApi from "./sourceProvider/sourceDataProcessor";
+import SourceProvider from "./sourceProvider";
 import { readFileSync } from "fs";
 import { parseModule } from "./codeTemplateProvider/swaggerAnalyser";
 import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/treeViewData";
@@ -10,7 +11,7 @@ import Storage from "./storeManage/storage";
 import StoreManage from "./storeManage";
 import SourceDataFetch from "./storeManage/sourceDataFetch";
 import { ConfigSelector } from "./viewManage/selector";
-import { parseUserInput } from "./configProvider";
+import ConfigProvider, { parseUserInput } from "./configProvider";
 
 import { showQuickPick, showInputBox } from "./viewManage/selector/basicInput";
 // import { multiStepInput } from "./viewManage/selector/multiStepInput";
@@ -60,6 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         }
         storeManage.saveUserConfig(config);
+        ConfigProvider(context).generateConfigFiles(config);
         console.log(config);
       }
     )

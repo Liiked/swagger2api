@@ -5,6 +5,8 @@ import { Config } from "../configProvider/processConfig";
 import axios from "axios";
 import * as fs from "fs";
 
+import { API } from "../types";
+
 /**
  * The utils of whole ext excution store manager.
  */
@@ -69,7 +71,13 @@ export default class StroeManager {
     return this.basicSave(this.metaDataPath, jsonToBuffer(content));
   }
   async readMetaJSON() {
-    return this.basicRead(this.metaDataPath);
+    return this.basicRead(this.metaDataPath).then(d => {
+      try {
+        return JSON.parse(d.toString()) as API.List;
+      } catch (error) {
+        return null;
+      }
+    });
   }
   async removeMetaJSON() {
     return this.saveMetaJSON(Buffer.from(""));

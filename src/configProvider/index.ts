@@ -4,30 +4,43 @@ import { Config } from "./processConfig";
 import { isPath } from "../helper/utils";
 import { isArray, isBoolean, isString } from "lodash";
 import { UserInputState } from "../viewManage/selector";
-import * as fs from "fs";
-import path from "path";
+import SourceProvider from "../sourceProvider";
+import { SourcePath, TemplatePath } from "../configProvider/processConfig";
+import CodeTemplateProvider from "../codeTemplateProvider";
+// import * as fs from "fs";
+// import path from "path";
 
-export default async function ConfigProvider(cxt: ExtensionContext) {
+export default function ConfigProvider(cxt: ExtensionContext) {
   const storeManage = new StoreManage(cxt);
-  const userConfigPath = storeManage.userConfigPath;
   const neccessaryConfig = ["source", "out", "templates"];
+  const sourceProvider = new SourceProvider(cxt, storeManage);
+  const codeTemplateProvider = new CodeTemplateProvider(cxt, storeManage);
+  // const userConfigPath = storeManage.userConfigPath;
   // const workpath =  workspace.rootPath;
 
   /**
    * initaite
    * @param cxt
    */
-  async function init(cxt: ExtensionContext) {
-    const userConfig = await storeManage.readUserConfig();
+  async function init(config?: Config) {
+    const userConfig = config || (await storeManage.readUserConfig());
     if (!userConfig) {
       throw "config data parse error!";
     }
-    if (!integrityValidate(userConfig) || !legalityValidate(userConfig)) {
+    if (validate(userConfig)) {
       throw "config validate failed!";
     }
     return {
       userConfig
     };
+  }
+
+  /**
+   * validate config
+   * @param config
+   */
+  function validate(config: Config) {
+    return integrityValidate(config) && legalityValidate(config);
   }
 
   /**
@@ -84,12 +97,53 @@ export default async function ConfigProvider(cxt: ExtensionContext) {
   /**
    * generate user template by config
    */
-  function generateConfigFiles() {}
-  function generateMetaFiles(sourcePath: string | string[]) {}
-  function generateOutFiles(outPath: string) {}
-  function generateTemplateFiles(tempPath: string) {}
+  async function generateConfigFiles(userConfig?: Config) {
+    const config = userConfig || (await storeManage.readUserConfig());
+    if (!config) {
+      return;
+    }
+    generateMetaFiles(config.source);
+    generateTemplateFiles(config.templates);
+  }
+  /**
+   * generate s2a meta files
+   * @param sourcePath
+   */
+  async function generateMetaFiles(
+    sourcePath: string | string[] | SourcePath[]
+  ) {
+    if (isString(sourcePath)) {
+      sourceProvider.save(sourcePath);
+    }
+    if (isArray(sourcePath) && isString(sourcePath[0])) {
+      sourceProvider.save(sourcePath[0]);
+    }
+    console.log("Meta Files Generated!");
+  }
 
-  return init(cxt);
+  /**
+   * generate final export code folder
+   * @param outPath
+   */
+  async function generateOutFiles(outPath: string) {}
+
+  /**
+   * generate code template folder & files
+   * @param tempPath
+   */
+  async function generateTemplateFiles(tempPath: string | TemplatePath[]) {
+    const {
+      codeTemp,
+      mockTemp
+    } = await codeTemplateProvider.exportOriginTemp();
+    if (isString(tempPath)) {
+      await storeManage.workSpaceSave(tempPath + "/codeTemp.js", codeTemp);
+      await storeManage.workSpaceSave(tempPath + "/mockTemp.js", mockTemp);
+      console.log("Tempalte Files Generated!");
+    }
+  }
+
+  return { init, generateConfigFiles };
 }
 
 /**

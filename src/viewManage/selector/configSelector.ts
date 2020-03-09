@@ -77,7 +77,7 @@ export default async function ConfigSelector(cxt: ExtensionContext) {
       ? "请输入本地路径，如 src/swagger.json"
       : "请输入远程路径，如 https://xxx.com/file.json";
     const defaultValue = isLocal
-      ? "src/swagger.json"
+      ? "/src/swagger.json"
       : "https://xxx.com/file.json";
     state.sourcePath = await input.showInputBox({
       title,

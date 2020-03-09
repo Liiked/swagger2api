@@ -19,13 +19,15 @@ export default class ConverToApi {
    */
   async convertPath(uri: vscode.Uri): Promise<API.List> {
     let apiDocument = null;
-    apiDocument = await SwaggerParser.validate(
-      decodeURIComponent(uri.toString())
-    ).catch(e => {
+    try {
+      apiDocument = await SwaggerParser.validate(
+        decodeURIComponent(uri.toString())
+      );
+    } catch (e) {
       // TODO: 错误需暴露到上层统一处理
-      vscode.window.showErrorMessage("Validate Error:", e.message);
-      Promise.reject(e);
-    });
+      vscode.window.showErrorMessage("ConvertPath Error:", e.message);
+      throw e;
+    }
 
     if (!apiDocument) {
       return {};
