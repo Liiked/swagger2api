@@ -1,5 +1,5 @@
-import { schema } from "./codeTemplateProvider/swaggerAnalyser";
-import { TreeItemCollapsibleState, Command } from "vscode";
+import { schema } from "./codeTemplateProvider/swaggerAnalyser"
+import { TreeItemCollapsibleState, Command } from "vscode"
 
 export enum TreeViewType {
   apiProject = "apiProject", // 多项目时使用
@@ -46,74 +46,68 @@ export enum TreeViewTypeToIcon {
 
 export declare namespace Parser {
   interface ProccessedData {
-    [param: string]: any;
-    name: string;
-    schema: Schema;
-    required: boolean;
-    description: string;
-    properties: object;
+    [param: string]: any
+    name: string
+    schema: Schema
+    required: boolean
+    description: string
+    properties: object
     "200": {
-      content: Property;
-      schema: Schema;
-    };
+      content: Property
+      schema: Schema
+    }
     content: {
       "application/json": {
-        schema: Schema;
-      };
-    };
+        schema: Schema
+      }
+    }
   }
 
   interface Schema {
-    properties: object | string;
-    type: string;
-    $ref: string;
+    properties: object | string
+    type: string
+    $ref: string
   }
 
   interface ParamType {
-    name: string;
-    type: string;
-    required: boolean;
-    description: string;
-    [key: string]: any;
+    name: string
+    type: string
+    required: boolean
+    description: string
+    [key: string]: any
   }
 
   interface SwaggerItem extends ParamType {
-    subItems?: SwaggerItem[];
+    subItems?: SwaggerItem[]
   }
 }
 
 // 返回结果
 export declare namespace API {
   interface List {
-    [apiName: string]: SingleItem[];
+    [apiName: string]: SingleItem[]
   }
   interface SingleItem {
-    [TreeViewType.method]: string;
-    [TreeViewType.operationId]: string;
-    [TreeViewType.url]: string;
-    [TreeViewType.title]: string;
-    [TreeViewType.params]: Parser.ParamType[];
-    [TreeViewType.payload]: schema;
-    [TreeViewType.response]: schema;
-    [property: string]: any; // 其他属性
+    [TreeViewType.method]: string
+    [TreeViewType.operationId]: string
+    [TreeViewType.url]: string
+    [TreeViewType.title]: string
+    [TreeViewType.params]: Parser.ParamType[]
+    [TreeViewType.payload]: schema
+    [TreeViewType.response]: schema
+    [property: string]: any // 其他属性
   }
 
   interface TreeviewItemObject {
-    label: string;
-    type: TreeViewType;
-    collapsibleState: TreeItemCollapsibleState;
-    command?: Command;
-    description?: string;
-    children?: TreeviewItemObject[] | TreeviewItemObject;
+    label: string
+    type: TreeViewType
+    collapsibleState: TreeItemCollapsibleState
+    command?: Command
+    description?: string
+    children?: TreeviewItemObject[] | TreeviewItemObject
   }
 }
 
-export declare interface Storage {
-  jsonToBuffer(json: object): Buffer | undefined;
-  writeFile(content: Buffer): Thenable<void>;
-  readFile(): Thenable<Uint8Array>;
-}
-
 interface Property {
-  [param: string]: any;
+  [param: string]: any
 }

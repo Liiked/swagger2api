@@ -2,23 +2,19 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
   Command,
+  commands,
   TreeDataProvider,
   window,
   Event,
   EventEmitter,
   workspace,
   Uri
-} from "vscode";
-import * as path from "path";
-import {
-  TreeViewType,
-  TreeViewTypeToIcon,
-  API,
-  Parser,
-  Storage
-} from "../../types";
-import * as _ from "lodash";
-import { schema } from "../../codeTemplateProvider/swaggerAnalyser";
+} from "vscode"
+import * as path from "path"
+import { TreeViewType, TreeViewTypeToIcon, API, Parser } from "../../types"
+import * as _ from "lodash"
+import { schema } from "../../codeTemplateProvider/swaggerAnalyser"
+import Storage from "../../storeManage/storage"
 
 const Icons: { [key in TreeViewType]: TreeViewTypeToIcon } = {
   [TreeViewType.apiProject]: TreeViewTypeToIcon.apiProject,
@@ -38,47 +34,49 @@ const Icons: { [key in TreeViewType]: TreeViewTypeToIcon } = {
   [TreeViewType.items]: TreeViewTypeToIcon.items,
   [TreeViewType.required]: TreeViewTypeToIcon.required,
   [TreeViewType.description]: TreeViewTypeToIcon.description
-};
+}
 
 // 辅助函数
-const Keys = Object.keys;
+const Keys = Object.keys
 
 export class JsonDataProvider
   implements TreeDataProvider<JsonData | JsonData[]> {
   private _onDidChangeTree: EventEmitter<
     JsonData | JsonData[] | undefined
-  > = new EventEmitter<JsonData | undefined>();
+  > = new EventEmitter<JsonData | undefined>()
   readonly onDidChangeTreeData: Event<JsonData | JsonData[] | undefined> = this
-    ._onDidChangeTree.event;
+    ._onDidChangeTree.event
   constructor(private workspaceRoot: string, private storage: Storage) {}
 
   /**
    * 接口实现
    * @param item
    */
-  refresh() {
-    this._onDidChangeTree.fire();
+  async refresh() {
+    await commands.executeCommand("s2a.test.configProvider.genMetaData")
+    this._onDidChangeTree.fire()
   }
+  export() {}
   /**
    * 接口实现
    * @param item treeview项
    */
   getTreeItem(item: JsonData): TreeItem {
-    return item;
+    return item
   }
   /**
    * 接口实现
    * @param item treeview项
    */
-  getChildren(item: JsonData): Thenable<JsonData[]> {
+  getChildren(item?: JsonData): Thenable<JsonData[]> {
     if (!this.workspaceRoot) {
-      window.showInformationMessage("No dependency in empty workspace");
-      return Promise.resolve([]);
+      window.showInformationMessage("No dependency in empty workspace")
+      return Promise.resolve([])
     }
     if (item) {
-      return this.parseApiData(item);
+      return this.parseApiData(item)
     }
-    return this.parseApiData();
+    return this.parseApiData()
   }
 
   /**
@@ -87,21 +85,25 @@ export class JsonDataProvider
    */
   async parseApiData(el?: JsonData): Promise<JsonData[]> {
     if (!el) {
-      const rawStorage = await this.storage.readFile();
-      const apiMetaJSON: API.List = JSON.parse(rawStorage.toString());
-
-      if (!Keys(apiMetaJSON).length) {
-        window.showInformationMessage(
-          "No transfered Meta Data, please use a swagger source file to convert first."
-        );
-        return [];
+      const rawStorage = await this.storage.readFile()
+      if (!rawStorage) {
+        await commands.executeCommand("s2a.test.configProvider.genMetaData")
+        // TODO: 用户弹框选择是否刷新数据
+        window.showWarningMessage(
+          "Workspace doesn't include any swagger data. You can try convert a Swagger file first."
+        )
+        return []
       }
-      const arr = this.generateTreeItemOfTags(apiMetaJSON);
+      const apiMetaJSON: API.List = JSON.parse(rawStorage.toString())
+      if (!Keys(apiMetaJSON).length) {
+        return []
+      }
+      const arr = this.generateTreeItemOfTags(apiMetaJSON)
       return Promise.resolve(
         arr.map(
           d => new JsonData(d.label, d.type, d.collapsibleState, d.children)
         )
-      );
+      )
     } else {
       return el.children
         ? Array.isArray(el.children)
@@ -124,23 +126,23 @@ export class JsonDataProvider
                 el.children.description
               )
             ]
-        : [];
+        : []
     }
   }
 
   private generateTreeItemOfTags(apis: API.List) {
-    const ApiOfTags = [];
+    const ApiOfTags = []
     for (const key in apis) {
-      const apiInTags = apis[key];
+      const apiInTags = apis[key]
       const template = {
         label: key,
         type: TreeViewType.apiModule,
         collapsibleState: apiInTags.length,
         children: this.generateTreeItemOfAPIs(apiInTags)
-      };
-      ApiOfTags.push(template);
+      }
+      ApiOfTags.push(template)
     }
-    return ApiOfTags;
+    return ApiOfTags
   }
 
   private generateTreeItemOfAPIs = (
@@ -153,16 +155,16 @@ export class JsonDataProvider
         collapsibleState: TreeItemCollapsibleState.Collapsed,
         children: this.generateTreeItemOfAPI(api),
         description: api.title
-      };
-    });
-  };
+      }
+    })
+  }
 
   private generateTreeItemOfAPI = (
     singleAPI: API.SingleItem | schema | Parser.ParamType
   ): API.TreeviewItemObject[] => {
     if (_.isArray(singleAPI)) {
       return (singleAPI as Parser.ParamType[]).map(d => {
-        const kString = d.type as keyof typeof TreeViewType;
+        const kString = d.type as keyof typeof TreeViewType
         return {
           label: d.name || d.description,
           type: TreeViewType[kString],
@@ -173,30 +175,30 @@ export class JsonDataProvider
               : TreeItemCollapsibleState.None),
           description: d.description,
           children: this.generateTreeItemOfAPI(d)
-        };
-      });
+        }
+      })
     }
     if (_.isObject(singleAPI)) {
       return Keys(singleAPI).map((key: string) => {
-        const property: API.SingleItem | schema = singleAPI[key];
-        const kString = key as keyof typeof TreeViewType;
+        const property: API.SingleItem | schema = singleAPI[key]
+        const kString = key as keyof typeof TreeViewType
         const readable =
-          _.isString(property) || _.isNumber(property) || _.isBoolean(property);
+          _.isString(property) || _.isNumber(property) || _.isBoolean(property)
         const desc = readable
           ? String(property)
           : property.title ||
-            `${property.type || ""} ${property.description || ""}`;
+            `${property.type || ""} ${property.description || ""}`
         return {
           label: key,
           type: TreeViewType[kString],
           collapsibleState: this.isCollaspe(property),
           description: this.descriptionOfKey(key, desc),
           children: this.generateTreeItemOfAPI(property)
-        };
-      });
+        }
+      })
     }
-    return [];
-  };
+    return []
+  }
 
   /**
    * 辅助函数-展示内置类型
@@ -205,12 +207,12 @@ export class JsonDataProvider
    */
   private descriptionOfKey(key: string, desc: string) {
     if (key === TreeViewType.properties) {
-      return "{} object";
+      return "{} object"
     }
     if (key === TreeViewType.params) {
-      return "[] array";
+      return "[] array"
     }
-    return desc;
+    return desc
   }
 
   /**
@@ -219,13 +221,13 @@ export class JsonDataProvider
    */
   isCollaspe = (data: API.SingleItem | schema) => {
     if (data instanceof Array && data.length) {
-      return TreeItemCollapsibleState.Collapsed;
+      return TreeItemCollapsibleState.Collapsed
     }
     if (_.isObject(data) && Keys(data).length) {
-      return TreeItemCollapsibleState.Collapsed;
+      return TreeItemCollapsibleState.Collapsed
     }
-    return TreeItemCollapsibleState.None;
-  };
+    return TreeItemCollapsibleState.None
+  }
 
   /**
    * 储存路径
@@ -233,7 +235,7 @@ export class JsonDataProvider
    * @param next
    */
   savePath(former: string, next: string | number) {
-    return former ? former + "." + String(next) : String(next);
+    return former ? former + "." + String(next) : String(next)
   }
 }
 
@@ -251,22 +253,22 @@ export class JsonData extends TreeItem {
     public readonly command?: Command, // 调用命令
     public readonly diffStatus?: string // diff结果
   ) {
-    super(label, collapsibleState);
-    const itemInIcon = type in TreeViewType;
-    this.setIcon(Icons[itemInIcon ? type : TreeViewType.name]);
+    super(label, collapsibleState)
+    const itemInIcon = type in TreeViewType
+    this.setIcon(Icons[itemInIcon ? type : TreeViewType.name])
   }
 
   get tooltip() {
-    return `${this.label}`;
+    return `${this.label}`
   }
 
   get description(): string {
-    return this.content || "";
+    return this.content || ""
   }
 
   private setIcon(iconName: string) {
     if (!iconName) {
-      return;
+      return
     }
     // TODO: 需要将media文件夹打包进去
     this.iconPath = {
@@ -292,6 +294,6 @@ export class JsonData extends TreeItem {
           `${iconName}.svg`
         )
       )
-    };
+    }
   }
 }

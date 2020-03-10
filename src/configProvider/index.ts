@@ -1,149 +1,151 @@
-import { ExtensionContext, workspace, Uri, window } from "vscode";
-import StoreManage from "../storeManage";
-import { Config } from "./processConfig";
-import { isPath } from "../helper/utils";
-import { isArray, isBoolean, isString } from "lodash";
-import { UserInputState } from "../viewManage/selector";
-import SourceProvider from "../sourceProvider";
-import { SourcePath, TemplatePath } from "../configProvider/processConfig";
-import CodeTemplateProvider from "../codeTemplateProvider";
+import { ExtensionContext, workspace, Uri, window } from "vscode"
+import StoreManage from "../storeManage"
+import { Config } from "./processConfig"
+import { isPath } from "../helper/utils"
+import { isArray, isBoolean, isString } from "lodash"
+import { UserInputState } from "../viewManage/selector"
+import SourceProvider from "../sourceProvider"
+import { SourcePath, TemplatePath } from "../configProvider/processConfig"
+import CodeTemplateProvider from "../codeTemplateProvider"
 // import * as fs from "fs";
 // import path from "path";
 
-export default function ConfigProvider(cxt: ExtensionContext) {
-  const storeManage = new StoreManage(cxt);
-  const neccessaryConfig = ["source", "out", "templates"];
-  const sourceProvider = new SourceProvider(cxt, storeManage);
-  const codeTemplateProvider = new CodeTemplateProvider(cxt, storeManage);
+export default class ConfigProvider {
+  private storeManage: StoreManage
+  private neccessaryConfig = ["source", "out", "templates"]
+  private sourceProvider: SourceProvider
+  private codeTemplateProvider: CodeTemplateProvider
   // const userConfigPath = storeManage.userConfigPath;
   // const workpath =  workspace.rootPath;
+
+  constructor(cxt: ExtensionContext) {
+    this.storeManage = new StoreManage(cxt)
+    this.sourceProvider = new SourceProvider(cxt, this.storeManage)
+    this.codeTemplateProvider = new CodeTemplateProvider(cxt, this.storeManage)
+  }
 
   /**
    * initaite
    * @param cxt
    */
-  async function init(config?: Config) {
-    const userConfig = config || (await storeManage.readUserConfig());
+  async init(config?: Config) {
+    const userConfig = config || (await this.storeManage.readUserConfig())
     if (!userConfig) {
-      throw "config data parse error!";
+      throw "config data parse error!"
     }
-    if (validate(userConfig)) {
-      throw "config validate failed!";
+    if (!this.validate(userConfig)) {
+      throw "config validate failed!"
     }
     return {
       userConfig
-    };
+    }
   }
 
   /**
    * validate config
    * @param config
    */
-  function validate(config: Config) {
-    return integrityValidate(config) && legalityValidate(config);
+  validate(config: Config) {
+    return this.integrityValidate(config) && this.legalityValidate(config)
   }
 
   /**
    * validate config integrity
    * @param config
    */
-  function integrityValidate(config: Config): boolean {
-    const keys = Object.keys(config);
+  integrityValidate(config: Config): boolean {
+    const keys = Object.keys(config)
     // neccessary keys check
-    if (!neccessaryConfig.every(d => keys.includes(d))) {
-      return false;
+    if (!this.neccessaryConfig.every(d => keys.includes(d))) {
+      return false
     }
 
-    const { control, generateDefination, source, out, templates } = config;
+    const { control, generateDefination, source, out, templates } = config
     if (!isArray(source) && !isString(source)) {
-      return false;
+      return false
     }
     if (!isString(out)) {
-      return false;
+      return false
     }
     if (!isArray(templates) && !isString(templates)) {
-      return false;
+      return false
     }
     if (control && !isBoolean(control)) {
-      return false;
+      return false
     }
     if (generateDefination && !isBoolean(generateDefination)) {
-      return false;
+      return false
     }
-    return true;
+    return true
   }
 
   /**
    * validate config legality
    * @param config
    */
-  function legalityValidate(config: Config): boolean {
-    const { source, out, templates } = config;
+  legalityValidate(config: Config): boolean {
+    const { source, out, templates } = config
     if (typeof source === "string" && !isPath(source)) {
-      window.showErrorMessage("source illegal");
-      return false;
+      window.showErrorMessage("source illegal")
+      return false
     }
     if (typeof out === "string" && !isPath(out)) {
-      window.showErrorMessage("out illegal");
-      return false;
+      window.showErrorMessage("out illegal")
+      return false
     }
     if (typeof templates === "string" && !isPath(templates)) {
-      window.showErrorMessage("templates illegal");
-      return false;
+      window.showErrorMessage("templates illegal")
+      return false
     }
-    return true;
+    return true
   }
 
   /**
    * generate user template by config
    */
-  async function generateConfigFiles(userConfig?: Config) {
-    const config = userConfig || (await storeManage.readUserConfig());
+  async generateConfigFiles(userConfig?: Config) {
+    const config = userConfig || (await this.storeManage.readUserConfig())
     if (!config) {
-      return;
+      return
     }
-    generateMetaFiles(config.source);
-    generateTemplateFiles(config.templates);
+    this.generateMetaFiles(config.source)
+    this.generateTemplateFiles(config.templates)
   }
   /**
    * generate s2a meta files
    * @param sourcePath
    */
-  async function generateMetaFiles(
-    sourcePath: string | string[] | SourcePath[]
-  ) {
+  async generateMetaFiles(sourcePath: string | string[] | SourcePath[]) {
     if (isString(sourcePath)) {
-      sourceProvider.save(sourcePath);
+      this.sourceProvider.save(sourcePath)
     }
     if (isArray(sourcePath) && isString(sourcePath[0])) {
-      sourceProvider.save(sourcePath[0]);
+      this.sourceProvider.save(sourcePath[0])
     }
-    console.log("Meta Files Generated!");
+    console.log("Meta Files Generated!")
   }
 
   /**
    * generate final export code folder
    * @param outPath
    */
-  async function generateOutFiles(outPath: string) {}
+  async generateOutFiles(outPath: string) {}
 
   /**
    * generate code template folder & files
    * @param tempPath
    */
-  async function generateTemplateFiles(tempPath: string | TemplatePath[]) {
+  async generateTemplateFiles(tempPath: string | TemplatePath[]) {
     const {
       codeTemp,
       mockTemp
-    } = await codeTemplateProvider.exportOriginTemp();
+    } = await this.codeTemplateProvider.exportOriginTemp()
     if (isString(tempPath)) {
-      await storeManage.workSpaceSave(tempPath + "/codeTemp.js", codeTemp);
-      await storeManage.workSpaceSave(tempPath + "/mockTemp.js", mockTemp);
-      console.log("Tempalte Files Generated!");
+      await this.storeManage.workSpaceSave(tempPath + "/codeTemp.js", codeTemp)
+      await this.storeManage.workSpaceSave(tempPath + "/mockTemp.js", mockTemp)
+      console.log("Tempalte Files Generated!")
     }
   }
-
-  return { init, generateConfigFiles };
 }
 
 /**
@@ -151,16 +153,16 @@ export default function ConfigProvider(cxt: ExtensionContext) {
  * @param inputs
  */
 export function parseUserInput(inputs: UserInputState): Config | void {
-  const { sourcePath, sourceFrom, outPath } = inputs;
+  const { sourcePath, sourceFrom, outPath } = inputs
   // TODO: local or remote logic
   if (sourceFrom?.label === "来自远程") {
-    window.showErrorMessage("not support remote");
-    return;
+    window.showErrorMessage("not support remote")
+    return
   }
 
   return {
     source: sourcePath,
     out: outPath,
     templates: "/.s2a/templates" // TODO: templates file structure
-  };
+  }
 }

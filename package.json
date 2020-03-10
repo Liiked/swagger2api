@@ -41,6 +41,11 @@
     },
     "commands": [
       {
+        "command": "s2a.test.configProvider.genMetaData",
+        "title": "测试:配置管理-生成元数据",
+        "category": "swagger2api"
+      },
+      {
         "command": "s2a.test.viewManage.configSelector",
         "title": "测试:视图管理-配置选择器",
         "category": "swagger2api"
@@ -48,6 +53,11 @@
       {
         "command": "s2a.test.storeManage.genConfig",
         "title": "测试:储存器-生成config",
+        "category": "swagger2api"
+      },
+      {
+        "command": "s2a.exportSingleAPI",
+        "title": "测试:视图管理-导出单个api",
         "category": "swagger2api"
       },
       {
@@ -84,13 +94,55 @@
         }
       },
       {
-        "command": "s2a.refresh",
+        "command": "s2a.test.refresh",
         "title": "Refresh",
         "category": "swagger2api",
         "icon": {
           "light": "media/light/refresh.svg",
           "dark": "media/dark/refresh.svg"
         }
+      },
+      {
+        "command": "s2a.trace",
+        "title": "Trace Source",
+        "category": "swagger2api",
+        "icon": {
+          "light": "media/light/download.svg",
+          "dark": "media/dark/download.svg"
+        }
+      },
+      {
+        "command": "s2a.checkTrace",
+        "title": "Confirm This Change",
+        "category": "swagger2api",
+        "icon": {
+          "light": "media/light/checkmark.svg",
+          "dark": "media/dark/checkmark.svg"
+        }
+      },
+      {
+        "command": "s2a.export",
+        "title": "Export Code",
+        "category": "swagger2api",
+        "icon": {
+          "light": "media/light/export.svg",
+          "dark": "media/dark/export.svg"
+        }
+      },
+      {
+        "command": "s2a.exportFilter",
+        "title": "Export Code By Config Filter",
+        "category": "swagger2api",
+        "icon": {
+          "light": "media/light/exportFilter.svg",
+          "dark": "media/dark/exportFilter.svg"
+        }
+      },
+      {
+        "command": "s2a.exportSingleAPI",
+        "title": "Export Single API Code By Config Filter",
+        "when": "view == swaggerToApi",
+        "group": "inline"
       },
       {
         "command": "s2a.createConfig",
@@ -106,9 +158,36 @@
     "menus": {
       "view/title": [
         {
-          "command": "s2a.refresh",
+          "command": "s2a.test.refresh",
           "when": "view == swaggerToApi",
           "group": "navigation"
+        },
+        {
+          "command": "s2a.trace",
+          "when": "view == swaggerToApi",
+          "group": "navigation"
+        },
+        {
+          "command": "s2a.checkTrace",
+          "when": "view == swaggerToApi",
+          "group": "navigation"
+        },
+        {
+          "command": "s2a.export",
+          "when": "view == swaggerToApi",
+          "group": "navigation"
+        },
+        {
+          "command": "s2a.exportFilter",
+          "when": "view == swaggerToApi",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "s2a.exportSingleAPI",
+          "when": "view == swaggerToApi",
+          "group": "inline"
         }
       ],
       "editor/title": [
@@ -162,10 +241,13 @@
   "dependencies": {
     "@types/jsonfile": "^5.0.0",
     "@types/lodash": "^4.14.149",
+    "@types/prettier": "^1.19.0",
     "axios": "^0.19.0",
     "commitizen": "^4.0.3",
+    "cosmiconfig": "^6.0.0",
     "jsonfile": "^5.0.0",
     "lodash": "^4.17.15",
+    "prettier": "^1.19.1",
     "swagger-parser": "^8.0.2"
   }
 }
