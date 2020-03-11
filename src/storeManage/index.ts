@@ -5,8 +5,6 @@ import path from "path"
 import { cosmiconfig } from "cosmiconfig"
 
 import { Config } from "../configProvider/processConfig"
-// const prettier = require("prettier");
-import prettier from "prettier"
 import axios from "axios"
 import * as fs from "fs"
 
@@ -51,17 +49,13 @@ export default class StoreManager {
   async basicRemove() {}
 
   async workSpaceRead(fileName: string) {
-    const filePath = `${this.workSpacePath}/${fileName}`
+    const filePath = `${this.workSpacePath}${fileName}`
+    const savePath = Uri.parse(filePath)
     // TODO: pathExists可能有问题
-    if (!this.pathExists(filePath)) {
-      window.showInformationMessage(
-        `StroeManager.workSpaceRead: Couldn't find file ${fileName}.`
-      )
-      return Promise.reject({
-        error: "StroeManager.workSpaceRead: File not found!"
-      })
+    if (!this.pathExists(savePath.fsPath)) {
+      throw `StroeManager.workSpaceRead: Couldn't find file ${fileName}.`
     }
-    const savePath = Uri.parse(`file://${filePath}`)
+
     return this.basicRead(savePath)
   }
   async workSpaceSave(fileName: string, content: any) {

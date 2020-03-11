@@ -1,60 +1,61 @@
-import { Parser } from "../types";
+import { Parser } from "../types"
+import { workspace } from "vscode"
 
 export type schema = {
-  description: string;
-  properties: properties;
-  type: string;
-  [property: string]: any; // 其他属性
-};
+  description: string
+  properties: properties
+  type: string
+  [property: string]: any // 其他属性
+}
 
 export type properties = {
   [key: string]: {
-    description: string;
-    type: string;
-    items?: schema;
-  };
-};
+    description: string
+    type: string
+    items?: schema
+  }
+}
 
 export type responseType = {
   [key: string]: {
-    content: jsonContent;
-    description: string;
-  };
-};
+    content: jsonContent
+    description: string
+  }
+}
 
 export type commomPayloadValue = {
-  content?: jsonContent;
-  description?: string;
-  required?: boolean;
-};
+  content?: jsonContent
+  description?: string
+  required?: boolean
+}
 
 export type handledcommonPayloadValue = {
-  content?: schema;
-  description?: string;
-  required?: boolean;
-};
+  content?: schema
+  description?: string
+  required?: boolean
+}
 
 export type handledResponseType = {
   [key: string]: {
-    content: schema;
-    description: string;
-  };
-};
+    content: schema
+    description: string
+  }
+}
 
 export type jsonContent = {
   "application/json": {
-    schema: schema;
-  };
+    schema: schema
+  }
   "text/plain": {
-    schema: schema;
-  };
-};
-
-interface Property {
-  [param: string]: any;
+    schema: schema
+  }
 }
 
-type SingleApiType = Parser.ProccessedData[] | null;
+interface Property {
+  [param: string]: any
+}
+
+type SingleApiType = Parser.ProccessedData[] | null
 
 /**
  * 请求数据-params
@@ -62,7 +63,7 @@ type SingleApiType = Parser.ProccessedData[] | null;
  */
 export function paramFactory(obj: SingleApiType): Parser.ParamType[] {
   if (!obj) {
-    return [];
+    return []
   }
   return obj.map((d: Parser.ProccessedData) => ({
     name: d.name,
@@ -70,7 +71,7 @@ export function paramFactory(obj: SingleApiType): Parser.ParamType[] {
     required: d.required,
     description: d.description,
     properties: d.schema.properties
-  }));
+  }))
 }
 
 /**
@@ -79,10 +80,10 @@ export function paramFactory(obj: SingleApiType): Parser.ParamType[] {
  */
 export function payloadFactory(obj: commomPayloadValue): schema {
   if (!obj) {
-    return {} as schema;
+    return {} as schema
   }
-  const resContent = extractPayloadContent(obj);
-  return resContent;
+  const resContent = extractPayloadContent(obj)
+  return resContent
 }
 
 /**
@@ -91,10 +92,10 @@ export function payloadFactory(obj: commomPayloadValue): schema {
  */
 export function returnFactory(obj: Parser.ProccessedData): schema {
   if (!obj) {
-    return {} as schema;
+    return {} as schema
   }
-  const resContent = extractResponseContent(obj);
-  return resContent;
+  const resContent = extractResponseContent(obj)
+  return resContent
 }
 
 /**
@@ -106,16 +107,15 @@ export function parseModule(
   modules: Property,
   parser: (obj: object, index: number, tag: string) => {}
 ) {
-  const apiObj: Property = {};
+  const apiObj: Property = {}
   for (const key in modules) {
-    const apis = modules[key];
-
+    const apis = modules[key]
     const apiMaps = apis.map((e: object, index: number) => {
-      return parser(e, index, key);
-    });
-    apiObj[key] = apiMaps;
+      return parser(e, index, key)
+    })
+    apiObj[key] = apiMaps
   }
-  return apiObj;
+  return apiObj
 }
 
 /**
@@ -123,9 +123,9 @@ export function parseModule(
  * @param response
  */
 function extractResponseContent(response: responseType): schema {
-  const res = response["200"];
-  const schema = extractSchema(res.content);
-  return schema;
+  const res = response["200"]
+  const schema = extractSchema(res.content)
+  return schema
 }
 
 /**
@@ -134,13 +134,13 @@ function extractResponseContent(response: responseType): schema {
  */
 function extractPayloadContent(payload: commomPayloadValue): schema {
   if (!payload) {
-    return {} as schema;
+    return {} as schema
   }
-  const schema = extractSchema(payload.content!);
-  return schema;
+  const schema = extractSchema(payload.content!)
+  return schema
 }
 
 function extractSchema(obj: jsonContent) {
-  const origin = obj["application/json"] || obj["text/plain"];
-  return origin.schema;
+  const origin = obj["application/json"] || obj["text/plain"]
+  return origin.schema
 }

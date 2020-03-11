@@ -20,8 +20,13 @@ export default class ConfigProvider {
 
   constructor(cxt: ExtensionContext) {
     this.storeManage = new StoreManage(cxt)
+    this.storeManage.readUserConfig()
     this.sourceProvider = new SourceProvider(cxt, this.storeManage)
-    this.codeTemplateProvider = new CodeTemplateProvider(cxt, this.storeManage)
+    this.codeTemplateProvider = new CodeTemplateProvider(
+      cxt,
+      undefined,
+      this.storeManage
+    )
   }
 
   /**

@@ -121,7 +121,7 @@
         }
       },
       {
-        "command": "s2a.export",
+        "command": "s2a.test.export",
         "title": "Export Code",
         "category": "swagger2api",
         "icon": {
@@ -173,7 +173,7 @@
           "group": "navigation"
         },
         {
-          "command": "s2a.export",
+          "command": "s2a.test.export",
           "when": "view == swaggerToApi",
           "group": "navigation"
         },

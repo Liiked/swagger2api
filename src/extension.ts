@@ -5,6 +5,7 @@ import ConverToApi from "./sourceProvider/sourceDataProcessor"
 import SourceProvider from "./sourceProvider"
 import { readFileSync } from "fs"
 import { parseModule } from "./codeTemplateProvider/swaggerAnalyser"
+import CodeTemplateProvider from "./CodeTemplateProvider"
 import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/treeViewData"
 import { Fetch } from "./storeManage/fetch"
 import Storage from "./storeManage/storage"
@@ -47,7 +48,18 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand("s2a.test.refresh", () =>
     treeProvider.refresh()
   )
-  vscode.commands.registerCommand("s2a.export", () => treeProvider.export())
+  vscode.commands.registerCommand("s2a.test.export", async () => {
+    const config = await storeManage.readUserConfig()
+    if (!config) {
+      return
+    }
+    const templateProvider = new CodeTemplateProvider(
+      context,
+      config,
+      storeManage
+    )
+    await templateProvider.export()
+  })
 
   /**
    *
