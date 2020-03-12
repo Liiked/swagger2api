@@ -3,7 +3,6 @@
 import * as vscode from "vscode"
 import CodeTemplateProvider from "./CodeTemplateProvider"
 import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/treeViewData"
-import Storage from "./storeManage/storage"
 import StoreManage from "./storeManage"
 import { ConfigSelector } from "./viewManage/selector"
 import ConfigProvider, { parseUserInput } from "./configProvider"
@@ -21,10 +20,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   const storeManage = new StoreManage(context)
 
-  const saveFile: Storage = new Storage(context)
   const treeProvider = new TreeViewDataProvider(
     vscode.workspace.rootPath || "",
-    saveFile
+    storeManage
   )
 
   // 树视图

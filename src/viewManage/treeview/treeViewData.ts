@@ -14,7 +14,7 @@ import * as path from "path"
 import { TreeViewType, TreeViewTypeToIcon, API, Parser } from "../../types"
 import * as _ from "lodash"
 import { schema } from "../../codeTemplateProvider/swaggerAnalyser"
-import Storage from "../../storeManage/storage"
+import StoreManage from "../../storeManage"
 
 const Icons: { [key in TreeViewType]: TreeViewTypeToIcon } = {
   [TreeViewType.apiProject]: TreeViewTypeToIcon.apiProject,
@@ -46,7 +46,7 @@ export class JsonDataProvider
   > = new EventEmitter<JsonData | undefined>()
   readonly onDidChangeTreeData: Event<JsonData | JsonData[] | undefined> = this
     ._onDidChangeTree.event
-  constructor(private workspaceRoot: string, private storage: Storage) {}
+  constructor(private workspaceRoot: string, private storage: StoreManage) {}
 
   /**
    * 接口实现
@@ -85,7 +85,7 @@ export class JsonDataProvider
    */
   async parseApiData(el?: JsonData): Promise<JsonData[]> {
     if (!el) {
-      const rawStorage = await this.storage.readFile()
+      const rawStorage = await this.storage.readMetaJSON()
       if (!rawStorage) {
         await commands.executeCommand("s2a.test.configProvider.genMetaData")
         // TODO: 用户弹框选择是否刷新数据
