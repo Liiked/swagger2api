@@ -1,4 +1,4 @@
-import ConfigSelector from "./configSelector";
-import { UserInputState } from "./configSelector";
+import ConfigSelector from "./configSelector"
+import { UserInputState } from "./configSelector"
 
-export { ConfigSelector, UserInputState };
+export { ConfigSelector, UserInputState }

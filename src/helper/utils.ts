@@ -1,3 +1,7 @@
+import { isString } from "lodash"
+import { REQUEST_ERROR } from "../errorMap"
+import { window } from "vscode"
+
 export const pipe = (...functions: Function[]) => (input: Function) =>
   functions.reduce((acc, fn) => fn(acc), input)
 
@@ -11,3 +15,14 @@ export const isPath = (str: string) => {
 }
 
 export const isTempalte = (content: string) => /#swagger2api/.test(content)
+
+export const isHTML = (str: string) => {
+  return /\<\/html\>/.test(str)
+}
+
+export const isValidRequestBody = (body: any) => {
+  if (isString(body) && isHTML(body)) {
+    return REQUEST_ERROR.ILLEGAL_BODY
+  }
+  return true
+}

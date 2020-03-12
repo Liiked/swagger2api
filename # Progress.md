@@ -23,6 +23,7 @@
   - [] friendly error display
   - [] ts generate
   - [] types generate
+  - [] fix error & improve template 
 
 
 - SourceProvider
@@ -30,3 +31,5 @@
 
 - Other 
   - [] optimize pack size by webpack build
+  - [] optimize media files
+  - [] build folder includes tempalte files

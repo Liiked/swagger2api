@@ -2,50 +2,46 @@ import {
   paramFactory,
   returnFactory,
   payloadFactory,
-  schema,
-  handledcommonPayloadValue
-} from "../codeTemplateProvider/swaggerAnalyser";
-import path from "path";
-import { API, Parser } from "../types";
-import * as vscode from "vscode";
-const fs = require("fs");
-import SwaggerParser from "swagger-parser";
+  schema
+} from "../codeTemplateProvider/swaggerAnalyser"
+import { API, Parser } from "../types"
+import * as vscode from "vscode"
+const fs = require("fs")
+import SwaggerParser from "swagger-parser"
 
 export default class ConverToApi {
-  exportPath = ""; // 导出路径
+  exportPath = "" // 导出路径
   /**
    * 源数据转为通用数据
    * @param uri 数据源存储路径
    */
   async convertPath(uri: vscode.Uri): Promise<API.List> {
-    let apiDocument = null;
+    let apiDocument = null
     try {
-      apiDocument = await SwaggerParser.validate(
-        decodeURIComponent(uri.toString())
-      );
+      apiDocument = await SwaggerParser.validate(decodeURIComponent(uri.fsPath))
     } catch (e) {
       // TODO: 错误需暴露到上层统一处理
-      vscode.window.showErrorMessage("ConvertPath Error:", e.message);
-      throw e;
+      vscode.window.showErrorMessage("ConvertPath Error:", e.message)
+      throw e
     }
 
     if (!apiDocument) {
-      return {};
+      return {}
     }
-    const { paths } = apiDocument;
-    const moduleObj: API.List = {};
+    const { paths } = apiDocument
+    const moduleObj: API.List = {}
 
     /* 提取tag */
-    const moduleSet = new Set(this.extractTags(paths) as []);
-    const wholeTags = Array.from(moduleSet);
+    const moduleSet = new Set(this.extractTags(paths) as [])
+    const wholeTags = Array.from(moduleSet)
     wholeTags.forEach((e: string) => {
-      moduleObj[e] = [];
-    });
+      moduleObj[e] = []
+    })
 
     for (const url in paths) {
-      const path = paths[url];
+      const path = paths[url]
       for (const method in path) {
-        const request = path[method];
+        const request = path[method]
         //   请求模型
         const {
           tags,
@@ -54,11 +50,11 @@ export default class ConverToApi {
           parameters,
           operationId,
           requestBody
-        } = request;
+        } = request
 
-        const params: Parser.ParamType[] = paramFactory(parameters);
-        const payload: schema = payloadFactory(requestBody);
-        const returnObj: schema = returnFactory(responses);
+        const params: Parser.ParamType[] = paramFactory(parameters)
+        const payload: schema = payloadFactory(requestBody)
+        const returnObj: schema = returnFactory(responses)
 
         tags.forEach((e: string) => {
           moduleObj[e] = [
@@ -72,11 +68,11 @@ export default class ConverToApi {
               params,
               payload
             }
-          ];
-        });
+          ]
+        })
       }
     }
-    return moduleObj;
+    return moduleObj
   }
 
   /**
@@ -85,74 +81,26 @@ export default class ConverToApi {
    */
   private extractTags(paths: object) {
     return Object.values(paths).reduce((total: any[], path): any[] => {
-      const _module = Object.values(path as object).map(d => d.tags[0]);
-      return [...(total as []), ..._module];
-    }, []);
-  }
-  /**
-   * 生成文件的导出路径/目录
-   * @param uri 插件存储路径
-   */
-  private genPath(uri: vscode.Uri): string {
-    const p = uri.path;
-    const swaggerPath = "/exportApi";
-    return p + swaggerPath;
-  }
-
-  /**
-   * 辅助函数-检查路径是否已经存在
-   * @param uri 插件存储路径
-   */
-  checkDirExisted(uri: vscode.Uri): Boolean {
-    this.exportPath = this.genPath(uri);
-    return fs.existsSync(this.exportPath);
-  }
-  /**
-   * 清空目录
-   * @param uri
-   */
-  cleanDir(uri: vscode.Uri) {
-    if (this.checkDirExisted(uri)) {
-      deleteFolder(this.exportPath);
-    }
-  }
-  /**
-   * 生成目录
-   * @param uri
-   */
-  genDir(uri: vscode.Uri) {
-    this.exportPath = this.genPath(uri);
-    fs.mkdirSync(this.exportPath);
-  }
-  /**
-   * 生成文件
-   * @param fileName 文件名
-   * @param content 文件内容
-   */
-  genFile(fileName: string, content: string) {
-    if (!this.exportPath) {
-      throw new Error("No Export Path");
-    }
-    fs.writeFileSync(this.exportPath + fileName, content, {
-      flag: "as+"
-    });
+      const _module = Object.values(path as object).map(d => d.tags[0])
+      return [...(total as []), ..._module]
+    }, [])
   }
 }
 
 function deleteFolder(path: string) {
-  var files = [];
+  var files = []
   if (fs.existsSync(path)) {
-    files = fs.readdirSync(path);
+    files = fs.readdirSync(path)
     files.forEach((file: string) => {
-      var curPath = path + "/" + file;
+      var curPath = path + "/" + file
       if (fs.statSync(curPath).isDirectory()) {
         // recurse
-        deleteFolder(curPath);
+        deleteFolder(curPath)
       } else {
         // delete file
-        fs.unlinkSync(curPath);
+        fs.unlinkSync(curPath)
       }
-    });
-    fs.rmdirSync(path);
+    })
+    fs.rmdirSync(path)
   }
 }

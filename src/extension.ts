@@ -1,31 +1,18 @@
 "use strict"
 
 import * as vscode from "vscode"
-import ConverToApi from "./sourceProvider/sourceDataProcessor"
-import SourceProvider from "./sourceProvider"
-import { readFileSync } from "fs"
-import { parseModule } from "./codeTemplateProvider/swaggerAnalyser"
 import CodeTemplateProvider from "./CodeTemplateProvider"
 import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/treeViewData"
-import { Fetch } from "./storeManage/fetch"
 import Storage from "./storeManage/storage"
 import StoreManage from "./storeManage"
-import SourceDataFetch from "./storeManage/sourceDataFetch"
 import { ConfigSelector } from "./viewManage/selector"
 import ConfigProvider, { parseUserInput } from "./configProvider"
 
-import { showQuickPick, showInputBox } from "./viewManage/selector/basicInput"
-// import { multiStepInput } from "./viewManage/selector/multiStepInput";
-import { quickOpen } from "./viewManage/selector/quickOpen"
-
 export function activate(context: vscode.ExtensionContext) {
   console.log('swagger2api says "Hello"')
-  console.log(context.storagePath)
+  console.log("storagePath:", context.storagePath)
 
   const { subscriptions } = context
-
-  const convertTool = new ConverToApi()
-
   /**
    *
    * 初始化
@@ -39,9 +26,6 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.workspace.rootPath || "",
     saveFile
   )
-
-  // 远程数据
-  const fetch = new Fetch(context)
 
   // 树视图
   vscode.window.registerTreeDataProvider("swaggerToApi", treeProvider)
@@ -104,28 +88,5 @@ export function activate(context: vscode.ExtensionContext) {
         })
       }
     )
-  )
-
-  // 获取数据源-选择一个文件
-  subscriptions.push(
-    vscode.commands.registerCommand("s2a.fetchSourceBySelect", async _ => {
-      // read file content
-      try {
-        SourceDataFetch.fromSelectFile()
-      } catch (error) {
-        vscode.window.showErrorMessage(error.message)
-      }
-    })
-  )
-
-  // 获取数据源-远程数据源
-  subscriptions.push(
-    vscode.commands.registerCommand("s2a.fetchSourceData", async () => {
-      try {
-        SourceDataFetch.fromRemoteFile(context)
-      } catch (error) {
-        vscode.window.showErrorMessage(error.message)
-      }
-    })
   )
 }

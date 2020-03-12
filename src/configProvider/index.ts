@@ -7,16 +7,12 @@ import { UserInputState } from "../viewManage/selector"
 import SourceProvider from "../sourceProvider"
 import { SourcePath, TemplatePath } from "../configProvider/processConfig"
 import CodeTemplateProvider from "../codeTemplateProvider"
-// import * as fs from "fs";
-// import path from "path";
 
 export default class ConfigProvider {
   private storeManage: StoreManage
   private neccessaryConfig = ["source", "out", "templates"]
   private sourceProvider: SourceProvider
   private codeTemplateProvider: CodeTemplateProvider
-  // const userConfigPath = storeManage.userConfigPath;
-  // const workpath =  workspace.rootPath;
 
   constructor(cxt: ExtensionContext) {
     this.storeManage = new StoreManage(cxt)
