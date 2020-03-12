@@ -56,7 +56,7 @@
         "category": "swagger2api"
       },
       {
-        "command": "s2a.exportSingleAPI",
+        "command": "s2a.test.exportSingleAPI",
         "title": "测试:视图管理-导出单个api",
         "category": "swagger2api"
       },
@@ -71,29 +71,6 @@
         "category": "swagger2api"
       },
       {
-        "command": "s2a.readjson",
-        "title": "swagger json to template",
-        "category": "swagger2api",
-        "icon": {
-          "light": "./media/transfer.svg",
-          "dark": "./media/transfer.svg"
-        }
-      },
-      {
-        "command": "s2a.quickInput",
-        "title": "swagger quick input",
-        "category": "swagger2api"
-      },
-      {
-        "command": "s2a.convert",
-        "title": "swagger template to api",
-        "category": "swagger2api",
-        "icon": {
-          "light": "./media/transfer.svg",
-          "dark": "./media/transfer.svg"
-        }
-      },
-      {
         "command": "s2a.test.refresh",
         "title": "Refresh",
         "category": "swagger2api",
@@ -103,7 +80,7 @@
         }
       },
       {
-        "command": "s2a.trace",
+        "command": "s2a.test.trace",
         "title": "Trace Source",
         "category": "swagger2api",
         "icon": {
@@ -112,7 +89,7 @@
         }
       },
       {
-        "command": "s2a.checkTrace",
+        "command": "s2a.test.confirmTraceResult",
         "title": "Confirm This Change",
         "category": "swagger2api",
         "icon": {
@@ -130,7 +107,7 @@
         }
       },
       {
-        "command": "s2a.exportFilter",
+        "command": "s2a.test.exportFilter",
         "title": "Export Code By Config Filter",
         "category": "swagger2api",
         "icon": {
@@ -139,20 +116,10 @@
         }
       },
       {
-        "command": "s2a.exportSingleAPI",
+        "command": "s2a.test.exportSingleAPI",
         "title": "Export Single API Code By Config Filter",
         "when": "view == swaggerToApi",
         "group": "inline"
-      },
-      {
-        "command": "s2a.createConfig",
-        "title": "create config",
-        "category": "swagger2api"
-      },
-      {
-        "command": "s2a.clearCache",
-        "title": "clear cache",
-        "category": "swagger2api"
       }
     ],
     "menus": {
@@ -163,12 +130,12 @@
           "group": "navigation"
         },
         {
-          "command": "s2a.trace",
+          "command": "s2a.test.trace",
           "when": "view == swaggerToApi",
           "group": "navigation"
         },
         {
-          "command": "s2a.checkTrace",
+          "command": "s2a.test.confirmTraceResult",
           "when": "view == swaggerToApi",
           "group": "navigation"
         },
@@ -178,38 +145,16 @@
           "group": "navigation"
         },
         {
-          "command": "s2a.exportFilter",
+          "command": "s2a.test.exportFilter",
           "when": "view == swaggerToApi",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "s2a.exportSingleAPI",
+          "command": "s2a.test.exportSingleAPI",
           "when": "view == swaggerToApi",
           "group": "inline"
-        }
-      ],
-      "editor/title": [
-        {
-          "command": "s2a.readjson",
-          "group": "navigation",
-          "when": "resourceLangId == json"
-        },
-        {
-          "command": "s2a.convert",
-          "group": "navigation",
-          "when": "resourceFilename =~ /Untitled/"
-        }
-      ],
-      "commandPalette": [
-        {
-          "command": "s2a.readjson",
-          "when": "resourceLangId == json"
-        },
-        {
-          "command": "s2a.convert",
-          "when": "resourceFilename =~ /Untitled/"
         }
       ]
     }

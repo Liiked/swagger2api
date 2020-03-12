@@ -18,12 +18,12 @@ function eachApiTemplate(
   tag
 ) {
   // some help variable
-  const basePath = "";
-  const { properties } = payload;
+  const basePath = ""
+  const { properties } = payload
 
   // some help function
   function upperFirstLetter([str, ...rest]) {
-    return str.toUpperCase() + rest.join("");
+    return str.toUpperCase() + rest.join("")
   }
 
   function docs(title, params, properties) {
@@ -34,46 +34,48 @@ function eachApiTemplate(
      ${payloadDoc(properties)}
      * 
     */
-    `;
+    `
   }
 
   function paramDoc(params) {
     if (!params) {
-      return "";
+      return ""
     }
     return params
       .map(
         d => `* @param ${d.name} {${d.type ? d.type : "*"}} ${d.description}\n`
       )
-      .join("");
+      .join("")
   }
 
   function payloadDoc(payload) {
-    const payloadDoc = [];
+    const payloadDoc = []
     if (!payload) {
-      return "";
+      return ""
     }
     for (const key in payload) {
-      const el = payload[key];
+      const el = payload[key]
       payloadDoc.push(
         `* @param ${key} {${el.type ? el.type : "*"}} ${el.description}\n`
-      );
+      )
     }
-    return payloadDoc.join("");
+    return payloadDoc.join("")
   }
 
-  return `
-  ${docs(title, params, properties)}
-  export const api${
-    operationId ? upperFirstLetter(operationId) : upperFirstLetter(tag) + index
-  } = async (data) => {
-    const res = request('${basePath}${url}', {
-      method: '${method}',
-      ${`${properties ? "data" : "params"}`}: data
-    });
-    if (res && _.isUndefined(res.errorCode)) {
-      return res;
-    }
-    return {};
-  }`;
+  return {
+    apiImplement: `
+      ${docs(title, params, properties)}
+      export const api${
+        operationId
+          ? upperFirstLetter(operationId)
+          : upperFirstLetter(tag) + index
+      } = async (data) => {
+        const res = request('${basePath}${url}', {
+          method: '${method}',
+          ${`${properties ? "data" : "params"}`}: data
+        });
+        return {}
+      }
+    `
+  }
 }
