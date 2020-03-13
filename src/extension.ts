@@ -47,6 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
         config,
         storeManage
       )
+      await templateProvider.init()
       await templateProvider.export()
     })
   )
@@ -69,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (!config) {
           return
         }
-        storeManage.saveUserConfig(config)
+        await storeManage.saveUserConfig(config)
         new ConfigProvider(context).generateConfigFiles(config)
         console.log(config)
       }

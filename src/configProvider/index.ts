@@ -1,7 +1,7 @@
 import { ExtensionContext, workspace, Uri, window } from "vscode"
 import StoreManage from "../storeManage"
 import { Config } from "./processConfig"
-import { isPath } from "../helper/utils"
+import { isUrl, isPath } from "../helper/utils"
 import { isArray, isBoolean, isString } from "lodash"
 import { UserInputState } from "../viewManage/selector"
 import SourceProvider from "../sourceProvider"
@@ -16,7 +16,6 @@ export default class ConfigProvider {
 
   constructor(cxt: ExtensionContext) {
     this.storeManage = new StoreManage(cxt)
-    this.storeManage.readUserConfig()
     this.sourceProvider = new SourceProvider(cxt, this.storeManage)
     this.codeTemplateProvider = new CodeTemplateProvider(
       cxt,
@@ -102,15 +101,15 @@ export default class ConfigProvider {
   }
 
   /**
-   * generate user template by config
+   * inject template files to workspace
    */
   async generateConfigFiles(userConfig?: Config) {
     const config = userConfig || (await this.storeManage.readUserConfig())
     if (!config) {
       return
     }
-    this.generateMetaFiles(config.source)
-    this.generateTemplateFiles(config.templates)
+    await this.generateMetaFiles(config.source)
+    await this.generateTemplateFiles(config.templates)
   }
   /**
    * generate s2a meta files
@@ -118,10 +117,10 @@ export default class ConfigProvider {
    */
   async generateMetaFiles(sourcePath: string | string[] | SourcePath[]) {
     if (isString(sourcePath)) {
-      this.sourceProvider.save(sourcePath)
+      await this.sourceProvider.save(sourcePath)
     }
     if (isArray(sourcePath) && isString(sourcePath[0])) {
-      this.sourceProvider.save(sourcePath[0])
+      await this.sourceProvider.save(sourcePath[0])
     }
     console.log("Meta Files Generated!")
   }
@@ -137,6 +136,9 @@ export default class ConfigProvider {
    * @param tempPath
    */
   async generateTemplateFiles(tempPath: string | TemplatePath[]) {
+    if (!this.codeTemplateProvider.isInitated) {
+      await this.codeTemplateProvider.init()
+    }
     const {
       codeTemp,
       mockTemp
@@ -155,11 +157,6 @@ export default class ConfigProvider {
  */
 export function parseUserInput(inputs: UserInputState): Config | void {
   const { sourcePath, sourceFrom, outPath } = inputs
-  // TODO: local or remote logic
-  if (sourceFrom?.label === "来自远程") {
-    window.showErrorMessage("not support remote")
-    return
-  }
 
   return {
     source: sourcePath,

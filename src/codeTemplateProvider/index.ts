@@ -17,6 +17,7 @@ export default class CodeTemplateProvider {
   public storeManage: StoreManage
   public cxt: ExtensionContext
   private config: Config | null
+  public isInitated = false
   tempFiles = {
     codeTempPath: path.join(__dirname + "/codeTemp.js"),
     mockTempPath: path.join(__dirname + "/mockTemp.js")
@@ -29,10 +30,9 @@ export default class CodeTemplateProvider {
     this.storeManage = st || new StoreManage(cxt)
     this.cxt = cxt
     this.config = config || null
-    this.setUserTempPath()
   }
 
-  async setUserTempPath() {
+  async init() {
     const space = workspace.workspaceFolders
       ? workspace.workspaceFolders[0]
       : null
@@ -44,6 +44,7 @@ export default class CodeTemplateProvider {
     }
     this.codeTemp.push(this.config.templates + "/codeTemp.js")
     this.mockTemp.push(this.config.templates + "/mockTemp.js")
+    this.isInitated = true
   }
 
   async export() {

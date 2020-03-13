@@ -85,8 +85,8 @@ export class JsonDataProvider
    */
   async parseApiData(el?: JsonData): Promise<JsonData[]> {
     if (!el) {
-      const rawStorage = await this.storage.readMetaJSON()
-      if (!rawStorage) {
+      const apiMetaJSON = await this.storage.readMetaJSON()
+      if (!apiMetaJSON) {
         await commands.executeCommand("s2a.test.configProvider.genMetaData")
         // TODO: 用户弹框选择是否刷新数据
         window.showWarningMessage(
@@ -94,7 +94,6 @@ export class JsonDataProvider
         )
         return []
       }
-      const apiMetaJSON: API.List = JSON.parse(rawStorage.toString())
       if (!Keys(apiMetaJSON).length) {
         return []
       }

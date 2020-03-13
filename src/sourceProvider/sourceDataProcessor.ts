@@ -7,6 +7,7 @@ import {
 import { API, Parser } from "../types"
 import * as vscode from "vscode"
 const fs = require("fs")
+import { SOURCE_PROVIDER_ERROR } from "../errorMap"
 import SwaggerParser from "swagger-parser"
 
 export default class ConverToApi {
@@ -20,8 +21,10 @@ export default class ConverToApi {
     try {
       apiDocument = await SwaggerParser.validate(decodeURIComponent(uri.fsPath))
     } catch (e) {
-      // TODO: 错误需暴露到上层统一处理
-      vscode.window.showErrorMessage("ConvertPath Error:", e.message)
+      vscode.window.showErrorMessage(
+        SOURCE_PROVIDER_ERROR.PARSE_ERROR,
+        e.message
+      )
       throw e
     }
 

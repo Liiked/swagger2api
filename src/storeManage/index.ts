@@ -10,6 +10,8 @@ import * as fs from "fs"
 
 import { API } from "../types"
 import { isObject } from "util"
+import { STORE_MANAGE_ERROR } from "../errorMap"
+import { fetchSwagger } from "../helper/request"
 
 /**
  * The utils of whole ext excution store manager.
@@ -46,7 +48,9 @@ export default class StoreManager {
   async basicSave(path: Uri, content: Buffer) {
     return workspace.fs.writeFile(path, Buffer.from(content))
   }
-  async basicRemove() {}
+  async basicRemove(path: Uri) {
+    return workspace.fs.delete(path)
+  }
 
   async workSpaceRead(fileName: string) {
     const filePath = `${this.workSpacePath}${fileName}`
@@ -62,7 +66,9 @@ export default class StoreManager {
     const path = Uri.parse(`file://${this.workSpacePath}/${fileName}`)
     return this.basicSave(path, Buffer.from(content))
   }
-  async workSpaceRemove() {}
+  async workSpaceRemove() {
+    return this.basicRemove
+  }
 
   /**
    * meta data
@@ -71,23 +77,38 @@ export default class StoreManager {
     return this.basicSave(this.metaDataPath, jsonToBuffer(content))
   }
   async readMetaJSON() {
-    return this.basicRead(this.metaDataPath).then(d => {
-      try {
-        return JSON.parse(d.toString()) as API.List
-      } catch (error) {
-        return null
+    try {
+      const d = await this.basicRead(this.metaDataPath)
+      return JSON.parse(d.toString()) as API.List
+    } catch (error) {
+      console.log(error)
+      if (error.name.test("EntryNotFound")) {
+        window.showErrorMessage(STORE_MANAGE_ERROR.METADATA_NOT_FOUND)
       }
-    })
+      window.showErrorMessage(error)
+      return null
+    }
   }
   async removeMetaJSON() {
-    return this.saveMetaJSON(Buffer.from(""))
+    return fs.unlink(this.metaDataPath.path, e => {
+      return e
+    })
   }
 
   /**
    * remote data
    */
-  async saveRemoteSource(content: object) {
-    return this.basicSave(this.remoteInLocalPath, jsonToBuffer(content))
+  async fetchAndSaveRemoteSource(url: string): Promise<Uri> {
+    const result = await fetchSwagger(url)
+    const fileExt = path.posix.parse(url).ext
+    this.remoteInLocalPath = Uri.parse(
+      this.storagePath + "/remoteFile" + fileExt
+    )
+    await this.saveRemoteSource(result)
+    return this.remoteInLocalPath
+  }
+  async saveRemoteSource(content: any) {
+    return this.basicSave(this.remoteInLocalPath, Buffer.from(content))
   }
   async readRemoteSource() {
     return this.basicRead(this.remoteInLocalPath)
@@ -110,7 +131,7 @@ export default class StoreManager {
   }
 
   async readUserConfig() {
-    if (!this.pathExists(this.userConfigPath.fsPath)) {
+    if (!this.pathExists(this.userConfigPath.path)) {
       window.showErrorMessage("no config found")
       return null
     }
@@ -120,18 +141,6 @@ export default class StoreManager {
       return null
     }
     return data?.config as Config
-  }
-
-  /**
-   * fetch
-   */
-  // TODO: 完成fetch
-  async fetch(url: string): Promise<Uri> {
-    const result = await axios.get(url)
-    const { data } = result
-    const savePath = Uri.parse(this.storagePath + "/remoteSourceData.yaml")
-    await this.basicSave(savePath, Buffer.from(data))
-    return savePath
   }
 
   /**

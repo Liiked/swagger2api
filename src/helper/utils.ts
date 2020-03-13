@@ -14,6 +14,10 @@ export const isPath = (str: string) => {
   return /\/\S+/g.test(str)
 }
 
+export const isUrl = (str: string) => {
+  return /^((https|http)?:\/\/)[^\s]+(\.json|\.yaml)$/.test(str)
+}
+
 export const isTempalte = (content: string) => /#swagger2api/.test(content)
 
 export const isHTML = (str: string) => {
