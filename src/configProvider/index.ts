@@ -15,7 +15,7 @@ export default class ConfigProvider {
   private codeTemplateProvider: CodeTemplateProvider
 
   constructor(cxt: ExtensionContext) {
-    this.storeManage = new StoreManage(cxt)
+    this.storeManage = StoreManage.init(cxt)
     this.sourceProvider = new SourceProvider(cxt, this.storeManage)
     this.codeTemplateProvider = new CodeTemplateProvider(
       cxt,
@@ -29,7 +29,7 @@ export default class ConfigProvider {
    * @param cxt
    */
   async init(config?: Config) {
-    const userConfig = config || (await this.storeManage.readUserConfig())
+    const userConfig = config || (await StoreManage.readUserConfig())
     if (!userConfig) {
       throw "config data parse error!"
     }
@@ -104,7 +104,7 @@ export default class ConfigProvider {
    * inject template files to workspace
    */
   async generateConfigFiles(userConfig?: Config) {
-    const config = userConfig || (await this.storeManage.readUserConfig())
+    const config = userConfig || (await StoreManage.readUserConfig())
     if (!config) {
       return
     }
@@ -144,8 +144,8 @@ export default class ConfigProvider {
       mockTemp
     } = await this.codeTemplateProvider.exportOriginTemp()
     if (isString(tempPath)) {
-      await this.storeManage.workSpaceSave(tempPath + "/codeTemp.js", codeTemp)
-      await this.storeManage.workSpaceSave(tempPath + "/mockTemp.js", mockTemp)
+      await StoreManage.workSpaceSave(tempPath + "/codeTemp.js", codeTemp)
+      await StoreManage.workSpaceSave(tempPath + "/mockTemp.js", mockTemp)
       console.log("Tempalte Files Generated!")
     }
   }

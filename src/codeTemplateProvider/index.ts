@@ -27,7 +27,7 @@ export default class CodeTemplateProvider {
   mockTemp: string[] = [] // mock模板路径
 
   constructor(cxt: ExtensionContext, config?: Config, st?: StoreManage) {
-    this.storeManage = st || new StoreManage(cxt)
+    this.storeManage = st || StoreManage.init(cxt)
     this.cxt = cxt
     this.config = config || null
   }
@@ -37,7 +37,7 @@ export default class CodeTemplateProvider {
       ? workspace.workspaceFolders[0]
       : null
     if (!this.config) {
-      this.config = await this.storeManage.readUserConfig()
+      this.config = await StoreManage.readUserConfig()
     }
     if (!space || !this.config) {
       return
@@ -75,7 +75,7 @@ export default class CodeTemplateProvider {
   }
 
   async exportCode(outPath: string, templatePath: string): Promise<boolean> {
-    const templateBuffer = await this.storeManage.workSpaceRead(templatePath)
+    const templateBuffer = await StoreManage.workSpaceRead(templatePath)
     const apiTemplate = templateBuffer.toString()
     if (!isTempalte(apiTemplate)) {
       window.showErrorMessage(
@@ -89,7 +89,7 @@ export default class CodeTemplateProvider {
       window.showErrorMessage("template parse error: ", error)
       return false
     }
-    const metaData = await this.storeManage.readMetaJSON()
+    const metaData = await StoreManage.readMetaJSON()
     if (!metaData) {
       window.showErrorMessage("no meta data found")
       return false
@@ -102,7 +102,7 @@ export default class CodeTemplateProvider {
     for (const key in parsed) {
       const el = parsed[key]
       const exportFile = prettier.format(el.join("\n"), result?.config)
-      this.storeManage.workSpaceSave(outPath + `/${key}.js`, exportFile)
+      StoreManage.workSpaceSave(outPath + `/${key}.js`, exportFile)
     }
     return true
   }
@@ -110,10 +110,10 @@ export default class CodeTemplateProvider {
   async exportMock(outPath: string) {}
 
   async exportOriginTemp() {
-    const codeTempContent = await this.storeManage.basicRead(
+    const codeTempContent = await StoreManage.basicRead(
       Uri.parse(this.tempFiles.codeTempPath)
     )
-    const mockTempContent = await this.storeManage.basicRead(
+    const mockTempContent = await StoreManage.basicRead(
       Uri.parse(this.tempFiles.mockTempPath)
     )
     return {

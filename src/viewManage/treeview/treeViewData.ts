@@ -46,7 +46,7 @@ export class JsonDataProvider
   > = new EventEmitter<JsonData | undefined>()
   readonly onDidChangeTreeData: Event<JsonData | JsonData[] | undefined> = this
     ._onDidChangeTree.event
-  constructor(private workspaceRoot: string, private storage: StoreManage) {}
+  constructor(private workspaceRoot: string) {}
 
   /**
    * 接口实现
@@ -85,7 +85,7 @@ export class JsonDataProvider
    */
   async parseApiData(el?: JsonData): Promise<JsonData[]> {
     if (!el) {
-      const apiMetaJSON = await this.storage.readMetaJSON()
+      const apiMetaJSON = await StoreManage.readMetaJSON()
       if (!apiMetaJSON) {
         await commands.executeCommand("s2a.test.configProvider.genMetaData")
         // TODO: 用户弹框选择是否刷新数据

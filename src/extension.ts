@@ -6,6 +6,7 @@ import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/
 import StoreManage from "./storeManage"
 import { ConfigSelector } from "./viewManage/selector"
 import ConfigProvider, { parseUserInput } from "./configProvider"
+import staticClass from "./staticClass"
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('swagger2api says "Hello"')
@@ -18,12 +19,9 @@ export function activate(context: vscode.ExtensionContext) {
    *
    */
 
-  const storeManage = new StoreManage(context)
+  const storeManage = StoreManage.init(context)
 
-  const treeProvider = new TreeViewDataProvider(
-    vscode.workspace.rootPath || "",
-    storeManage
-  )
+  const treeProvider = new TreeViewDataProvider(vscode.workspace.rootPath || "")
 
   // 树视图
   vscode.window.registerTreeDataProvider("swaggerToApi", treeProvider)
@@ -58,33 +56,6 @@ export function activate(context: vscode.ExtensionContext) {
         const configProvider = new ConfigProvider(context)
         const config = await configProvider.init()
         configProvider.generateMetaFiles(config.userConfig.source)
-      }
-    )
-  )
-  subscriptions.push(
-    vscode.commands.registerCommand(
-      "s2a.test.viewManage.configSelector",
-      async () => {
-        const result = await ConfigSelector(context)
-        const config = parseUserInput(result)
-        if (!config) {
-          return
-        }
-        await storeManage.saveUserConfig(config)
-        new ConfigProvider(context).generateConfigFiles(config)
-        console.log(config)
-      }
-    )
-  )
-  subscriptions.push(
-    vscode.commands.registerCommand(
-      "s2a.test.storeManage.genConfig",
-      async () => {
-        storeManage.saveUserConfig({
-          source: ["http://www.example.com/swagger.json"],
-          out: "/exportApi",
-          templates: "/.s2a/templates/template.js"
-        })
       }
     )
   )

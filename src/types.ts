@@ -1,6 +1,23 @@
 import { schema } from "./codeTemplateProvider/swaggerAnalyser"
 import { TreeItemCollapsibleState, Command } from "vscode"
 
+/**
+ * file names of storage
+ */
+export namespace StoreFileNames {
+  export enum SourceFile {
+    RemoteFileName = "RemoteFile",
+    MetaFileName = "MetaFile"
+  }
+  export enum CodeTemplateFile {
+    MockTemplateFileName = "MockTemp",
+    CodeTemplateFileName = "CodeTemp"
+  }
+}
+
+/**
+ * treeview items
+ */
 export enum TreeViewType {
   apiProject = "apiProject", // 多项目时使用
   apiModule = "apiModule", // api模块
@@ -22,7 +39,9 @@ export enum TreeViewType {
   description = "description"
 }
 
-// 左值同上
+/**
+ * treeview icons
+ */
 export enum TreeViewTypeToIcon {
   apiProject = "module",
   apiModule = "module",
@@ -44,6 +63,9 @@ export enum TreeViewTypeToIcon {
   description = "text"
 }
 
+/**
+ * swagger original parser
+ */
 export declare namespace Parser {
   interface ProccessedData {
     [param: string]: any
@@ -82,7 +104,9 @@ export declare namespace Parser {
   }
 }
 
-// 返回结果
+/**
+ * meta file types
+ */
 export declare namespace API {
   interface List {
     [apiName: string]: SingleItem[]

@@ -10,6 +10,10 @@ export const jsonToBuffer = (json: object): Buffer => {
   return Buffer.from(str)
 }
 
+export const toStoreFileName = (...str: string[]) => {
+  return str.join("_")
+}
+
 export const isPath = (str: string) => {
   return /\/\S+/g.test(str)
 }
