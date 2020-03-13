@@ -6,7 +6,6 @@ import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/
 import StoreManage from "./storeManage"
 import { ConfigSelector } from "./viewManage/selector"
 import ConfigProvider, { parseUserInput } from "./configProvider"
-import staticClass from "./staticClass"
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('swagger2api says "Hello"')
@@ -48,6 +47,33 @@ export function activate(context: vscode.ExtensionContext) {
       await templateProvider.init()
       await templateProvider.export()
     })
+  )
+  subscriptions.push(
+    vscode.commands.registerCommand(
+      "s2a.test.viewManage.configSelector",
+      async () => {
+        const result = await ConfigSelector(context)
+        const config = parseUserInput(result)
+        if (!config) {
+          return
+        }
+        await storeManage.saveUserConfig(config)
+        new ConfigProvider(context).generateConfigFiles(config)
+        console.log(config)
+      }
+    )
+  )
+  subscriptions.push(
+    vscode.commands.registerCommand(
+      "s2a.test.storeManage.genConfig",
+      async () => {
+        storeManage.saveUserConfig({
+          source: ["http://www.example.com/swagger.json"],
+          out: "/exportApi",
+          templates: "/.s2a/templates/template.js"
+        })
+      }
+    )
   )
   subscriptions.push(
     vscode.commands.registerCommand(
