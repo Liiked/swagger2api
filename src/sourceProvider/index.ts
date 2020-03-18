@@ -2,6 +2,7 @@ import { ExtensionContext, workspace, Uri, window } from "vscode"
 import StoreManage from "../storeManage"
 import ConverToApi from "./sourceDataProcessor"
 import { isUrl } from "../helper/utils"
+import path from "path"
 
 export default class SourceProvider {
   public cxt: ExtensionContext
@@ -9,16 +10,26 @@ export default class SourceProvider {
     this.cxt = cxt
   }
 
-  async save(path: string) {
+  async save(p: string) {
     const convertTool = new ConverToApi()
+    const reslovedPath = path.posix.parse(p)
     let data
-    if (isUrl(path)) {
-      const rawFilePath = await StoreManage.fetchAndSaveRemoteSource(path)
+    if (isUrl(p)) {
+      const rawFilePath = await StoreManage.fetchAndSaveRemoteSource(p)
       data = await convertTool.convertPath(rawFilePath)
     } else {
-      data = await convertTool.convertPath(Uri.parse(workspace.rootPath + path))
+      if (workspace.rootPath) {
+        data = await convertTool.convertPath(
+          Uri.parse(workspace.rootPath + path)
+        )
+      } else {
+        throw "no workspace"
+      }
     }
-    StoreManage.saveMetaJSON(data)
+    if (!data) {
+      return
+    }
+    StoreManage.saveMetaJSON(reslovedPath.name + reslovedPath.ext, data)
 
     console.log("SourceProvider: save", data)
     return data

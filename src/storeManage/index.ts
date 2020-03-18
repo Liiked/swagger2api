@@ -1,17 +1,43 @@
-import { ExtensionContext, workspace, Uri, window } from "vscode"
-import { jsonToBuffer, toStoreFileName } from "../helper/utils"
-import s2aConfig from "../configProvider/s2a.config"
 import path from "path"
+import { ExtensionContext, workspace, Uri, window } from "vscode"
+import {
+  jsonToBuffer,
+  encodeStoreFileName,
+  decodeStoreFileName
+} from "../helper/utils"
+import s2aConfig from "../configProvider/s2a.config"
 import { cosmiconfig } from "cosmiconfig"
+import { traverse, Traverse } from "fs-tree-utils"
 
 import { Config } from "../configProvider/processConfig"
-import axios from "axios"
 import * as fs from "fs"
 
 import { API, StoreFileNames } from "../types"
 import { isObject } from "util"
 import { STORE_MANAGE_ERROR } from "../errorMap"
 import { fetchSwagger } from "../helper/request"
+
+export enum FileType {
+  metaData,
+  remoteFile
+}
+
+export enum FileVersion {
+  new = "new",
+  cur = "cur"
+}
+
+interface StoreFileItem {
+  type: FileType
+  version: FileVersion
+  fileName: string
+  path: string
+}
+
+type storeFileList = {
+  metaFiles: StoreFileItem[]
+  remoteFiles: StoreFileItem[]
+}
 
 /**
  * The utils of whole ext excution store manager.
@@ -22,30 +48,60 @@ export default class StoreManager {
   // paths
   static workSpacePath: string | undefined
   static storagePath: string | undefined
-  static metaDataPath: Uri // local transfered meta json
+  // static metaDataBasePath: Uri // local transfered meta json
   static remoteInLocalPath: Uri // remote source file in local
   static userConfigPath: Uri // config in workspace
   static configPath = "" // TODO: 将config处理后导出 config in workspace
+  static allStoredFiles: storeFileList = {
+    metaFiles: [],
+    remoteFiles: []
+  }
 
-  static init(cxt: ExtensionContext) {
+  static async init(cxt: ExtensionContext) {
     this.cxt = cxt
 
     this.workSpacePath = workspace.rootPath
     this.storagePath = this.cxt.storagePath
-    this.metaDataPath = Uri.parse(
-      `file://${this.storagePath}/${toStoreFileName(
-        StoreFileNames.SourceFile.MetaFileName
-      )}`
-    )
-    this.remoteInLocalPath = Uri.parse(
-      `file://${this.storagePath}/${toStoreFileName(
-        StoreFileNames.SourceFile.RemoteFileName
-      )}`
-    )
+    // this.metaDataBasePath = Uri.parse(
+    //   `file://${this.storagePath}/${encodeStoreFileName(
+    //     FileType.metaData,
+    //     FileVersion.cur,
+    //     StoreFileNames.SourceFile.MetaFileName
+    //   )}`
+    // )
+    // this.remoteInLocalPath = Uri.parse(
+    //   `file://${this.storagePath}/${encodeStoreFileName(
+    //     FileType.remoteFile,
+    //     FileVersion.cur,
+    //     StoreFileNames.SourceFile.RemoteFileName
+    //   )}`
+    // )
     this.userConfigPath = Uri.parse(
       `file://${workspace.rootPath}/s2a.config.js`
     )
+    await this.searchAllStoredFiles()
     return this
+  }
+
+  // batch file methods
+
+  static async searchAllStoredFiles() {
+    if (this.storagePath) {
+      const res = await traverse(this.storagePath)
+      const pathObj = res.map(d => decodeStoreFileName(d.item, d.path))
+      const metaFiles = pathObj.filter(
+        d => Number(d.type) === FileType.metaData
+      ) as StoreFileItem[]
+      const remoteFiles = pathObj.filter(
+        d => Number(d.type) === FileType.remoteFile
+      ) as StoreFileItem[]
+      this.allStoredFiles = {
+        metaFiles,
+        remoteFiles
+      }
+      return res
+    }
+    throw "no storagePath"
   }
 
   /**
@@ -82,12 +138,25 @@ export default class StoreManager {
   /**
    * meta data
    */
-  static async saveMetaJSON(content: object) {
-    return this.basicSave(this.metaDataPath, jsonToBuffer(content))
+  static async saveMetaJSON(fileName: string, content: object) {
+    const savePath = Uri.parse(
+      `file://${this.storagePath}/${encodeStoreFileName(
+        FileType.metaData,
+        FileVersion.cur,
+        fileName
+      )}`
+    )
+    return this.basicSave(savePath, jsonToBuffer(content))
   }
   static async readMetaJSON() {
+    if (!this.allStoredFiles.metaFiles.length) {
+      window.showErrorMessage("no meta file")
+      return null
+    }
     try {
-      const d = await this.basicRead(this.metaDataPath)
+      const d = await this.basicRead(
+        Uri.parse(this.allStoredFiles.metaFiles[0].path)
+      )
       return JSON.parse(d.toString()) as API.List
     } catch (error) {
       console.log(error)
@@ -98,10 +167,8 @@ export default class StoreManager {
       return null
     }
   }
-  static async removeMetaJSON() {
-    return fs.unlink(this.metaDataPath.path, e => {
-      return e
-    })
+  static async removeMetaJSON(path: Uri) {
+    return workspace.fs.delete(path)
   }
 
   /**
@@ -109,9 +176,13 @@ export default class StoreManager {
    */
   static async fetchAndSaveRemoteSource(url: string): Promise<Uri> {
     const result = await fetchSwagger(url)
-    const fileExt = path.posix.parse(url).ext
+    const { name, ext } = path.posix.parse(url)
     this.remoteInLocalPath = Uri.parse(
-      this.storagePath + "/remoteFile" + fileExt
+      `file://${this.storagePath}/${encodeStoreFileName(
+        FileType.remoteFile,
+        FileVersion.cur,
+        name + ext
+      )}`
     )
     await this.saveRemoteSource(result)
     return this.remoteInLocalPath
@@ -122,8 +193,16 @@ export default class StoreManager {
   static async readRemoteSource() {
     return this.basicRead(this.remoteInLocalPath)
   }
-  static async removeRemoteSource() {
-    return this.saveMetaJSON(Buffer.from(""))
+  static async removeRemoteSource(fileName: string) {
+    return workspace.fs.delete(
+      Uri.parse(
+        `file://${this.storagePath}/${encodeStoreFileName(
+          FileType.metaData,
+          FileVersion.cur,
+          fileName
+        )}`
+      )
+    )
   }
 
   /**

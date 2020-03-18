@@ -53,10 +53,25 @@
     resolve-from "^5.0.0"
     resolve-global "^1.0.0"
 
+"@tsfun/array@^0.0.0":
+  version "0.0.0"
+  resolved "https://registry.npm.taobao.org/@tsfun/array/download/@tsfun/array-0.0.0.tgz#cb8d9dd1c07b201d2b8608175c7c74821fe93dcc"
+  integrity sha1-y42d0cB7IB0rhggXXHx0gh/pPcw=
+  dependencies:
+    "@types/node" "^13.1.6"
+    tslib "^1.10.0"
+
 "@types/events@*":
   version "3.0.0"
   resolved "https://registry.npm.taobao.org/@types/events/download/@types/events-3.0.0.tgz?cache=0&sync_timestamp=1580841990603&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fevents%2Fdownload%2F%40types%2Fevents-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
   integrity sha1-KGLz9Yqaf3w+eNefEw3U1xwlwqc=
+
+"@types/fs-extra@^8.0.1":
+  version "8.1.0"
+  resolved "https://registry.npm.taobao.org/@types/fs-extra/download/@types/fs-extra-8.1.0.tgz#1114834b53c3914806cd03b3304b37b3bd221a4d"
+  integrity sha1-ERSDS1PDkUgGzQOzMEs3s70iGk0=
+  dependencies:
+    "@types/node" "*"
 
 "@types/glob@^7.1.1":
   version "7.1.1"
@@ -98,6 +113,11 @@
   version "10.17.17"
   resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-10.17.17.tgz?cache=0&sync_timestamp=1582916592836&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-10.17.17.tgz#7a183163a9e6ff720d86502db23ba4aade5999b8"
   integrity sha1-ehgxY6nm/3INhlAtsjukqt5Zmbg=
+
+"@types/node@^13.1.6":
+  version "13.9.1"
+  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-13.9.1.tgz#96f606f8cd67fb018847d9b61e93997dabdefc72"
+  integrity sha1-lvYG+M1n+wGIR9m2HpOZfave/HI=
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -738,7 +758,7 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-fs-extra@8.1.0:
+fs-extra@8.1.0, fs-extra@^8.1.0:
   version "8.1.0"
   resolved "https://registry.npm.taobao.org/fs-extra/download/fs-extra-8.1.0.tgz#49d43c45a88cd9677668cb7be1b46efdb8d2e1c0"
   integrity sha1-SdQ8RaiM2Wd2aMt74bRu/bjS4cA=
@@ -746,6 +766,18 @@ fs-extra@8.1.0:
     graceful-fs "^4.2.0"
     jsonfile "^4.0.0"
     universalify "^0.1.0"
+
+fs-tree-utils@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.npm.taobao.org/fs-tree-utils/download/fs-tree-utils-0.1.8.tgz#9fb2ef03beb29bc90c6bcae0bca614e111681dbf"
+  integrity sha1-n7LvA76ym8kMa8rgvKYU4RFoHb8=
+  dependencies:
+    "@tsfun/array" "^0.0.0"
+    "@types/fs-extra" "^8.0.1"
+    "@types/node" "^13.1.6"
+    fs-extra "^8.1.0"
+    monorepo-shared-assets "^0.0.19"
+    tslib "^1.10.0"
 
 fs.realpath@^1.0.0:
   version "1.0.0"
@@ -922,6 +954,11 @@ iconv-lite@^0.4.24:
   integrity sha1-ICK0sl+93CHS9SSXSkdKr+czkIs=
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
+
+immutable@^4.0.0-rc.12:
+  version "4.0.0-rc.12"
+  resolved "https://registry.npm.taobao.org/immutable/download/immutable-4.0.0-rc.12.tgz#ca59a7e4c19ae8d9bf74a97bdf0f6e2f2a5d0217"
+  integrity sha1-ylmn5MGa6Nm/dKl73w9uLypdAhc=
 
 import-fresh@^2.0.0:
   version "2.0.0"
@@ -1364,6 +1401,16 @@ mocha@^6.1.4:
     yargs "13.3.0"
     yargs-parser "13.1.1"
     yargs-unparser "1.6.0"
+
+monorepo-shared-assets@^0.0.19:
+  version "0.0.19"
+  resolved "https://registry.npm.taobao.org/monorepo-shared-assets/download/monorepo-shared-assets-0.0.19.tgz#27d097752f63047394d66f8e6746d57a2eadf1e7"
+  integrity sha1-J9CXdS9jBHOU1m+OZ0bVei6t8ec=
+  dependencies:
+    "@tsfun/array" "^0.0.0"
+    "@types/node" "^13.1.6"
+    immutable "^4.0.0-rc.12"
+    tslib "^1.10.0"
 
 ms@2.0.0:
   version "2.0.0"
@@ -1953,7 +2000,7 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
+tslib@^1.10.0, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.11.1"
   resolved "https://registry.npm.taobao.org/tslib/download/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
   integrity sha1-6xXRKIJ/vuKEFUnhcfRe0zisfjU=

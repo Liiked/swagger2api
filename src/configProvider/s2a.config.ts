@@ -7,6 +7,9 @@ export default {
 
   out: "/exportApi",
 
+  /**
+   * TODO: only supports some of keywords
+   */
   groupBy: "operationId",
 
   templates: {

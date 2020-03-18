@@ -1,6 +1,7 @@
 import { isString } from "lodash"
 import { REQUEST_ERROR } from "../errorMap"
 import { window } from "vscode"
+import { FileType, FileVersion } from "../storeManage"
 
 export const pipe = (...functions: Function[]) => (input: Function) =>
   functions.reduce((acc, fn) => fn(acc), input)
@@ -10,8 +11,33 @@ export const jsonToBuffer = (json: object): Buffer => {
   return Buffer.from(str)
 }
 
-export const toStoreFileName = (...str: string[]) => {
-  return str.join("_")
+/**
+ * encode store manage file name
+ * @param type store file type
+ * @param version store file version
+ * @param fileName
+ */
+export const encodeStoreFileName = (
+  type: FileType,
+  version: FileVersion,
+  fileName: string
+) => {
+  return `${type}_${version}_${fileName}`
+}
+
+/**
+ * decode store manage file name
+ * @param name fileName
+ * @param p filePath
+ */
+export const decodeStoreFileName = (name: string, p: string) => {
+  const [type, version, fileName] = name.split("_")
+  return {
+    type: Number(type),
+    version,
+    fileName,
+    path: p
+  }
 }
 
 export const isPath = (str: string) => {
