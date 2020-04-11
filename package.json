@@ -46,6 +46,11 @@
         "category": "swagger2api"
       },
       {
+        "command": "s2a.test.viewManage.errorManage",
+        "title": "测试:错误处理",
+        "category": "swagger2api"
+      },
+      {
         "command": "s2a.test.viewManage.configSelector",
         "title": "测试:视图管理-配置选择器",
         "category": "swagger2api"

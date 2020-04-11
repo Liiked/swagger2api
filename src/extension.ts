@@ -5,6 +5,7 @@ import CodeTemplateProvider from "./CodeTemplateProvider"
 import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/treeViewData"
 import StoreManage from "./storeManage"
 import { ConfigSelector } from "./viewManage/selector"
+import ErrorHandler from "./viewManage/errorHandler"
 import ConfigProvider, { parseUserInput } from "./configProvider"
 
 export function activate(context: vscode.ExtensionContext) {
@@ -47,6 +48,17 @@ export function activate(context: vscode.ExtensionContext) {
       await templateProvider.init()
       await templateProvider.export()
     })
+  )
+  subscriptions.push(
+    vscode.commands.registerCommand(
+      "s2a.test.viewManage.errorManage",
+      async () => {
+        ErrorHandler.showErrorMsg(
+          "file goes wrong, please check detail",
+          "script error"
+        )
+      }
+    )
   )
   subscriptions.push(
     vscode.commands.registerCommand(
