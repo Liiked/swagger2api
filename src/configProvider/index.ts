@@ -1,12 +1,12 @@
 import { ExtensionContext, workspace, Uri, window } from "vscode"
-import StoreManage from "../storeManage"
+import StoreManage from "../store"
 import { Config } from "./processConfig"
 import { isUrl, isPath } from "../helper/utils"
 import { isArray, isBoolean, isString } from "lodash"
-import { UserInputState } from "../viewManage/selector"
-import SourceProvider from "../sourceProvider"
+import { UserInputState } from "../view/selector"
+import SourceProvider from "../parse"
 import { SourcePath, TemplatePath } from "../configProvider/processConfig"
-import CodeTemplateProvider from "../codeTemplateProvider"
+import CodeTemplateProvider from "../template"
 
 export default class ConfigProvider {
   private storeManage: StoreManage

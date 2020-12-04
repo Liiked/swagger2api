@@ -1,11 +1,11 @@
 "use strict"
 
 import * as vscode from "vscode"
-import CodeTemplateProvider from "./CodeTemplateProvider"
-import { JsonDataProvider as TreeViewDataProvider } from "./viewManage/treeview/treeViewData"
-import StoreManage from "./storeManage"
-import { ConfigSelector } from "./viewManage/selector"
-import ErrorHandler from "./viewManage/errorHandler"
+import CodeTemplateProvider from "./template"
+import { JsonDataProvider as TreeViewDataProvider } from "./view/treeview/treeViewData"
+import StoreManage from "./store"
+import { ConfigSelector } from "./view/selector"
+import ErrorHandler from "./view/errorHandler"
 import ConfigProvider, { parseUserInput } from "./configProvider"
 
 export function activate(context: vscode.ExtensionContext) {

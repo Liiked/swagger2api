@@ -1,7 +1,7 @@
 import { isString } from "lodash"
 import { REQUEST_ERROR } from "../errorMap"
 import { window } from "vscode"
-import { FileType, FileVersion } from "../storeManage"
+import { FileType, FileVersion } from "../store"
 
 export const pipe = (...functions: Function[]) => (input: Function) =>
   functions.reduce((acc, fn) => fn(acc), input)

@@ -1,5 +1,5 @@
 import { ExtensionContext, workspace, Uri, window } from "vscode"
-import StoreManage from "../storeManage"
+import StoreManage from "../store"
 import ConverToApi from "./sourceDataProcessor"
 import { isUrl } from "../helper/utils"
 import path from "path"

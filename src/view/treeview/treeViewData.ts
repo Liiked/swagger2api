@@ -13,8 +13,8 @@ import {
 import * as path from "path"
 import { TreeViewType, TreeViewTypeToIcon, API, Parser } from "../../types"
 import * as _ from "lodash"
-import { schema } from "../../codeTemplateProvider/swaggerAnalyser"
-import StoreManage from "../../storeManage"
+import { schema } from "../../template/swaggerAnalyser"
+import StoreManage from "../../store"
 
 const Icons: { [key in TreeViewType]: TreeViewTypeToIcon } = {
   [TreeViewType.apiProject]: TreeViewTypeToIcon.apiProject,

@@ -1,4 +1,4 @@
-import { schema } from "./codeTemplateProvider/swaggerAnalyser"
+import { schema } from "./template/swaggerAnalyser"
 import { TreeItemCollapsibleState, Command } from "vscode"
 
 /**

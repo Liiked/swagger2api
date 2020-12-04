@@ -8,9 +8,9 @@ import {
 import { cosmiconfigSync } from "cosmiconfig"
 import prettier from "prettier"
 import { isTempalte } from "../helper/utils"
-import StoreManage from "../storeManage"
+import StoreManage from "../store"
 import path from "path"
-import { parseModule } from "../codeTemplateProvider/swaggerAnalyser"
+import { parseModule } from "./swaggerAnalyser"
 import { Config } from "../configProvider/processConfig"
 
 export default class CodeTemplateProvider {
