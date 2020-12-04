@@ -129,10 +129,10 @@
   resolved "https://registry.npm.taobao.org/@types/prettier/download/@types/prettier-1.19.0.tgz#a2502fb7ce9b6626fdbfc2e2a496f472de1bdd05"
   integrity sha1-olAvt86bZib9v8LipJb0ct4b3QU=
 
-"@types/vscode@^1.36.0":
-  version "1.42.0"
-  resolved "https://registry.npm.taobao.org/@types/vscode/download/@types/vscode-1.42.0.tgz#0ad891a9487e91e34be7c56985058a179031eb76"
-  integrity sha1-CtiRqUh+keNL58VphQWKF5Ax63Y=
+"@types/vscode@^1.50.0":
+  version "1.51.0"
+  resolved "https://registry.npm.taobao.org/@types/vscode/download/@types/vscode-1.51.0.tgz#f2e324d8385db95030b1454fd1f043618e08097d"
+  integrity sha1-8uMk2DhduVAwsUVP0fBDYY4ICX0=
 
 agent-base@4, agent-base@^4.3.0:
   version "4.3.0"
